@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>keep运动截图生成</title>
+    <style>
+        @font-face {
+            font-family: 'keeprun';
+            src: url(./DINCond-Bold.otf);
+        }
+        html,
+        body {
+            width: 100%;
+            position: relative;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        li {
+            list-style: none;
+        }
+        #main-div {
+            margin-top: 0px;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        #main-div .new-img {
+            position: relative;
+            width: 360px;
+            height: 718.5px;
+        }
+        .new-img .gui-img {
+            position: absolute;
+            transform: scale(0.5);
+            top: -50%;
+            left: -50%;
+            vertical-align: top;
+        }
+        .new-img .bgimgwrap {
+            width: 360px;
+            height: 718.5px;
+            position: absolute;
+            display: flex;
+            overflow: hidden;
+            text-align: center;
+            justify-content: center;
+			align-items: center;
+            top: 0px;
+            left: 0px;
+        }
+        .new-img .innerbgimg {
+            width: 360px;
+            height: 718.5px;
+            margin: 0 auto;
+            display: block;
+        }
+        .new-img .portrait-wrap {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            display: flex;
+            overflow: hidden;
+            text-align: center;
+            justify-content: center;
+			align-items: center;
+            top: 335px;
+            left: 284px;
+            border-radius: 20px;
+        }
+        .new-img .portrait {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto;
+            display: block;
+        }
+        .new-img span {
+            position: absolute;
+        }
+        .username {
+            top: 385px;
+            right: 32px;
+            font-size: 13px;
+        }
+        .mile {
+            color: #57525d;
+            font-size: 46px;
+            font-family: 'keeprun';
+            transform: scale(1.15, 0.95);
+            transform-origin: 0 0;
+        }
+        .mile-par {
+            top: 387px;
+            right: 315px;
+            letter-spacing: -4px;
+        }
+        .mile-poi {
+            top: 386px;
+            left: 61px;
+        }
+        .datetime {
+            color: #a2a2a2;
+            font-size: 13px;
+            font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+        }
+        .date {
+            top: 407px;
+            left: 222px;
+        }
+        .time {
+            top: 407px;
+            left: 296px;
+        }
+        .env {
+            color: #a2a2a2;
+            font-size: 13px;
+            font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+            transform: scale(1.05, 1);
+            letter-spacing: -0.5px;
+        }
+        .temperature {
+            top: 425.5px;
+            right: 81px;
+        }
+        .humidity {
+            top: 425.5px;
+            right: 34px;
+        }
+        .speed {
+            color: #58505b;
+            font-size: 27px;
+            font-family: 'keeprun';
+            transform: scale(1.15, 0.95);
+        }
+        .spe-min {
+            top: 480px;
+            left: 31px;
+        }
+        .spe-sec {
+            top: 480px;
+            left: 60px;
+            letter-spacing: -1px;
+        }
+        .cost-hour {
+            top: 480px;
+            left: 139.5px;
+        }
+        .cost-min {
+            top: 480px;
+            left: 168px;
+        }
+        .cost-sec {
+            top: 480px;
+            left: 199px;
+        }
+        .calorie {
+            top: 479.5px;
+            right: 33px;
+        }
+        .set-data {
+            width: 300px;
+        }
+        input {
+            width: 55px;
+            height: 24px;
+            padding-left: 5px;
+            border-radius: 5px;
+            border: 1px solid #038957;
+            vertical-align: middle;
+        }
+         :focus-visible {
+            outline: #15b77b auto 1px;
+        }
+        .username-inp {
+            width: 125px;
+        }
+        .img-text {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            font-size: 18px;
+            transform: translateX(-50%);
+        }
+        .time-inp {
+            width: 20px;
+            margin-left: 4px;
+            margin-right: 1px;
+        }
+        button {
+            width: 80px;
+            height: 24px;
+            background-color: #24c68a;
+            color: #fff;
+            border-radius: 9px;
+            line-height: 15px;
+            border: 2px solid #c5e4a4;
+            font-size: 15px;
+        }
+        .save-btn {
+            width: 180px;
+            height: 50px;
+            border-radius: 26px;
+            line-height: 36px;
+            font-size: 20px;
+        }
+        .init-btn {
+            background-color: #c6c6c6;
+        }
+        .set-data h4 {
+            font-size: 24px;
+            font-weight: normal;
+            color: #24c68a;
+        }
+        .setDataList li {
+            margin-top: 15px;
+        }
+        .setDataList label {
+            color: #24c68a;
+        }
+        input[type="radio"] {
+            width: 20px;
+            margin: 8px 12px;
+        }
+        .warning {
+            font-size: 20px;
+            padding: 1rem 0 0 0;
+        }
+        .explanation {
+            color: #666;
+            padding: 1rem 0 0 0;
+            font-size: 15px;
+        }
+        .explanation a {
+            text-decoration: underline;
+            color: #0000FF;
+        }
+    </style>
+    
+</head>
+
+<body>
+    <div id="main-div">
+        <div id="new-Img" class="new-img">
+            <div class="bgimgwrap">
+                <img src="images/0.png" class="innerbgimg" id="bg-img">
+            </div>
+            <img src="images/1.png" class="gui-img">
+            <div class="portrait-wrap">
+                <img class="portrait" id="portrait" src="images/default_portrait.png">
+            </div>
+            <span class="username" id="username">UserName</span>
+            <span class="mile mile-par" id="mile-par">0</span>
+            <span class="mile mile-poi" id="mile-poi">00</span>
+            <span class="datetime date" id="date">0000/00/00</span>
+            <span class="datetime time" id="time">00:00</span>
+            <span class="env temperature" id="temperature">21</span>
+            <span class="env humidity" id="humidity">65</span>
+            <span class="speed spe-min" id="spe-min">00</span>
+            <span class="speed spe-sec" id="spe-sec">00</span>
+            <span class="speed cost-hour" id="cost-hour">00</span>
+            <span class="speed cost-min" id="cost-min">00</span>
+            <span class="speed cost-sec" id="cost-sec">00</span>
+            <span class="speed calorie" id="calorie">0</span>
+        </div>
+        <div class="set-data">
+            <h4>数据设置</h4>
+            <ul class="setDataList">
+                <li>
+                    <label>用户名：</label>
+                    <input id="inpt_username" onchange="setData()" type="text" class="username-inp">
+                </li>
+                <li>
+                    <label>头像：</label>
+                    <button onclick="inpt_portrait_onClick()" class="inpt-btn">选择图片</button>
+                    <input style="display:none;" type="file" accept="image/*" id="inpt_portrait" onchange="portrait_inpt()">
+                    <button onclick="init_portrait()" class="init-btn">恢复默认</button>
+                </li>
+                <li>
+                    <label>公里：</label>
+                    <input type="number" min="0" max="20" id="inpt_miles" onchange="setData()" class="mile2-inp">
+                </li>
+                <li>
+                    <label>配速：</label>
+                    <input id="inpt_speeds" onchange="setData()" type="text">
+                </li>
+                <li>
+                    <label>时间：</label>
+                    <input id="inpt_month" onchange="setData()" type="text" class="time-inp">
+                    <span>月</span>
+                    <input id="inpt_day" onchange="setData()" type="text" class="time-inp">
+                    <span>日</span>
+                    <input id="inpt_hour" onchange="setData()" type="text" class="time-inp">
+                    <span>时</span>
+                    <input id="inpt_min" onchange="setData()" type="text" class="time-inp">
+                    <span>分</span>
+                </li>
+                <li>
+                    <label>温度：</label>
+                    <input id="inpt_temperature" onchange="setData()" type="text">
+                </li>
+                <li>
+                    <label>湿度：</label>
+                    <input id="inpt_humidity" onchange="setData()" type="text">
+                </li>
+                <li>
+                    <label>背景图片：</label>
+                    <button onclick="inpt_bgimg_onClick()" class="inpt-btn">选择图片</button>
+                    <input style="display:none;" type="file" accept="image/*" id="inpt_bgimg" onchange="bgimg_inpt()">
+                    <button onclick="init_bgimg()" class="init-btn">恢复默认</button>
+                </li>
+                <li>
+                    <button onclick="Download()" class="save-btn">保存图片</button>
+                </li>
+                <li>
+                    <div class="warning">
+                        <span>
+                            <b>免责声明: 页面仅供技术研究使用，<br />请勿用于非法用途，<br />否则后果作者概不负责！</b>
+                        </span>
+                    </div>
+                    <div class="explanation">
+                        <span>1. 修改"数据设置"部分的输入框中的内容即可更改截图中出现的各项数值.</span><br />
+                        <span>2. 点击"保存图片"即可自动生成截图并下载到本地.</span><br />
+                        <br>
+                        <span>本项目仓库地址: <a href="https://gitee.com/fyhb/keep">https://gitee.com/fyhb/keep</a>.</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script src="./html2canvas.min.js"></script>
+    <script type="text/javascript">
+        var miles, speeds, username, date_year, date_month, date_day, time_hour, time_min, temperature, humidity;
+        var SRC = "";
+        function fract(num) {
+            return num - Math.trunc(num);
+        }
+        function addZero(i) {
+            if (i < 10) {
+                i = "0" + String(i);
+                return i;
+                }
+            return String(i);
+            }
+        function setData() {
+            username = document.getElementById("inpt_username").value;
+		    miles = parseFloat(document.getElementById("inpt_miles").value);
+		    speeds = parseFloat(document.getElementById("inpt_speeds").value);
+		    date_month = parseInt(document.getElementById("inpt_month").value);
+		    date_day = parseInt(document.getElementById("inpt_day").value);
+		    time_hour = parseInt(document.getElementById("inpt_hour").value);
+		    time_min = parseInt(document.getElementById("inpt_min").value);
+		    temperature = parseInt(document.getElementById("inpt_temperature").value);
+		    humidity = parseInt(document.getElementById("inpt_humidity").value);
+		    rander();
+        }
+        function initInputData() {
+            document.getElementById("inpt_username").value = username;
+		    document.getElementById("inpt_miles").value = miles;
+		    document.getElementById("inpt_speeds").value = speeds;
+		    document.getElementById("inpt_month").value = date_month;
+		    document.getElementById("inpt_day").value = date_day;
+		    document.getElementById("inpt_hour").value = time_hour;
+		    document.getElementById("inpt_min").value = time_min;
+		    document.getElementById("inpt_temperature").value = temperature;
+		    document.getElementById("inpt_humidity").value = humidity;
+        }
+		function rander() {
+		    let miles_int = Math.floor(miles);
+            let miles_dec = Math.round((miles - miles_int) * 100);
+            let speeds_int = Math.floor(speeds);
+            let speeds_dec = Math.round((speeds - speeds_int) * 100);
+		    let times = (speeds_dec / 60 + speeds_int) * miles;
+            let timeInc = Math.trunc(times);
+            let cost_hour = Math.floor(timeInc / 60);
+            let cost_min = timeInc % 60;
+            let cost_sec = Math.round((times - timeInc) * 60);
+            let calorie = Math.round(69 * miles * 1.036);
+		    document.getElementById("mile-par").innerHTML = miles_int;
+		    document.getElementById("mile-poi").innerHTML = addZero(miles_dec);
+		    document.getElementById("date").innerHTML = String(date_year) + "/" + addZero(date_month) + "/" + addZero(date_day);
+		    document.getElementById("time").innerHTML = addZero(time_hour) + ":" + addZero(time_min);
+		    document.getElementById("temperature").innerHTML = String(temperature) + "℃";
+		    document.getElementById("humidity").innerHTML = String(humidity) + "%";
+		    document.getElementById("username").innerHTML = username;
+		    document.getElementById("spe-min").innerHTML = addZero(speeds_int);
+		    document.getElementById("spe-sec").innerHTML = addZero(speeds_dec);
+		    document.getElementById("cost-hour").innerHTML = addZero(cost_hour);
+		    document.getElementById("cost-min").innerHTML = addZero(cost_min);
+		    document.getElementById("cost-sec").innerHTML = addZero(cost_sec);
+		    document.getElementById("calorie").innerHTML = addZero(calorie);
+		}
+    	function dataURLtoBlob(dataurl) {
+			var arr = dataurl.split(',');
+			//注意base64的最后面中括号和引号是不转译的   
+			var _arr = arr[1].substring(0, arr[1].length - 2);
+			var mime = arr[0].match(/:(.*?);/)[1],
+				bstr = atob(_arr),
+				n = bstr.length,
+				u8arr = new Uint8Array(n);
+			while (n--) {
+				u8arr[n] = bstr.charCodeAt(n);
+			}
+			return new Blob([u8arr], {
+				type: mime
+			});
+		}
+        function inpt_bgimg_onClick() {
+            document.getElementById("inpt_bgimg").click();
+        }
+        function inpt_portrait_onClick() {
+            document.getElementById("inpt_portrait").click();
+        }
+        function bgimg_inpt() {
+			var oFReader = new FileReader();
+			oFReader.onload = function (event) {
+				var osrc = event.target.result;
+				if (SRC) {
+					URL.revokeObjectURL(SRC);
+				}
+				SRC = URL.createObjectURL(dataURLtoBlob(osrc));
+				document.getElementById("bg-img").src = SRC;
+				let IMG = new Image();
+				IMG.src = SRC;
+				IMG.onload = function(){
+					if(IMG.width / IMG.height > 0.5010){
+						document.getElementById("bg-img").style.height = "718.5px";
+						document.getElementById("bg-img").style.width = "auto";
+					}else{
+						document.getElementById("bg-img").style.height = "auto";
+						document.getElementById("bg-img").style.width = "360px";
+					}
+				}
+			}
+			var ofile = document.getElementById("inpt_bgimg").files[0];
+			oFReader.readAsDataURL(ofile);
+		}
+        function portrait_inpt() {
+			var oFReader = new FileReader();
+			oFReader.onload = function (event) {
+				var osrc = event.target.result;
+				if (SRC) {
+					URL.revokeObjectURL(SRC)
+				}
+				SRC = URL.createObjectURL(dataURLtoBlob(osrc));
+				document.getElementById("portrait").src = SRC;
+				let IMG = new Image();
+				IMG.src = SRC;
+				IMG.onload = function(){
+					if(IMG.width > IMG.height){
+						document.getElementById("portrait").style.height = "40px";
+						document.getElementById("portrait").style.width = "auto";
+					}else{
+						document.getElementById("portrait").style.height = "auto";
+						document.getElementById("portrait").style.width = "40px";
+					}
+				}
+			}
+			var ofile = document.getElementById("inpt_portrait").files[0];
+			oFReader.readAsDataURL(ofile);
+		}
+		function init_bgimg() {
+		    document.getElementById("bg-img").style.height = "718.5px";
+			document.getElementById("bg-img").style.width = "360px";
+			document.getElementById("bg-img").src = "images/0.png";
+		}
+		function init_portrait() {
+		    document.getElementById("portrait").style.height = "40px";
+			document.getElementById("portrait").style.width = "40px";
+			document.getElementById("portrait").src = "images/default_portrait.png";
+		}
+		function Download() {
+		    let ele = document.getElementById("new-Img");
+            html2canvas(ele, {
+                useCORS: true,
+                logging: false,
+            }).then((canvas) => {
+                // canvas转为图片流
+                let dataurl = canvas.toDataURL('image/png');
+
+                // 非ie下正常，主要原因是ie下a标签不支持download属性
+                let donwLink = document.createElement('a');
+                donwLink.href = dataurl;
+                donwLink.download = "keep" + (date_month) + "月" + (date_day) + "日" + "跑步打卡"; // 图片名字
+                donwLink.click();
+                let event = new MouseEvent('click');
+                donwLink.dispatchEvent(event);
+            });
+		}
+        window.onload = function() {
+            miles = Math.floor((2 + Math.random() * 3) * 100) / 100;
+            speeds = Math.floor((4 + Math.random() * 6) * 100) / 100;
+            let datetime_now = new Date();
+            date_year = datetime_now.getFullYear();
+            date_month = datetime_now.getMonth();
+            date_day = datetime_now.getDate();
+            time_hour = datetime_now.getHours();
+            time_min = datetime_now.getMinutes();
+            username = "UserName";
+            humidity = 69;
+            temperature = 21;
+            initInputData();
+            rander();
+        }
+    </script>
+</body>
+</html>
