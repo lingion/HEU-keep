@@ -1,0 +1,182 @@
+    <script type="text/javascript">
+        var miles, speeds, username, date_year, date_month, date_day, time_hour, time_min, temperature, humidity;
+        var bgSRC = "", ptSRC = "";
+        var default_bgSRC = "";
+        function fract(num) {
+            return num - Math.trunc(num);
+        }
+        function addZero(i) {
+            if (i < 10) {
+                i = "0" + String(i);
+                return i;
+                }
+            return String(i);
+            }
+        function setData() {
+            username = document.getElementById("inpt_username").value;
+		    miles = parseFloat(document.getElementById("inpt_miles").value);
+		    speeds = parseFloat(document.getElementById("inpt_speeds").value);
+		    date_month = parseInt(document.getElementById("inpt_month").value);
+		    date_day = parseInt(document.getElementById("inpt_day").value);
+		    time_hour = parseInt(document.getElementById("inpt_hour").value);
+		    time_min = parseInt(document.getElementById("inpt_min").value);
+		    temperature = parseInt(document.getElementById("inpt_temperature").value);
+		    humidity = parseInt(document.getElementById("inpt_humidity").value);
+		    rander();
+        }
+        function initInputData() {
+            document.getElementById("inpt_username").value = username;
+		    document.getElementById("inpt_miles").value = miles;
+		    document.getElementById("inpt_speeds").value = speeds;
+		    document.getElementById("inpt_month").value = date_month;
+		    document.getElementById("inpt_day").value = date_day;
+		    document.getElementById("inpt_hour").value = time_hour;
+		    document.getElementById("inpt_min").value = time_min;
+		    document.getElementById("inpt_temperature").value = temperature;
+		    document.getElementById("inpt_humidity").value = humidity;
+        }
+		function rander() {
+		    let miles_int = Math.floor(miles);
+            let miles_dec = Math.round((miles - miles_int) * 100);
+            let speeds_int = Math.floor(speeds);
+            let speeds_dec = Math.round((speeds - speeds_int) * 100);
+		    let times = (speeds_dec / 60 + speeds_int) * miles;
+            let timeInc = Math.trunc(times);
+            let cost_hour = Math.floor(timeInc / 60);
+            let cost_min = timeInc % 60;
+            let cost_sec = Math.round((times - timeInc) * 60);
+            let calorie = Math.round(69 * miles * 1.036);
+		    document.getElementById("mile-par").innerHTML = miles_int;
+		    document.getElementById("mile-poi").innerHTML = addZero(miles_dec);
+		    document.getElementById("date").innerHTML = String(date_year) + "/" + addZero(date_month) + "/" + addZero(date_day);
+		    document.getElementById("time").innerHTML = addZero(time_hour) + ":" + addZero(time_min);
+		    document.getElementById("temperature").innerHTML = String(temperature) + "℃";
+		    document.getElementById("humidity").innerHTML = String(humidity) + "%";
+		    document.getElementById("username").innerHTML = username;
+		    document.getElementById("spe-min").innerHTML = addZero(speeds_int);
+		    document.getElementById("spe-sec").innerHTML = addZero(speeds_dec);
+		    document.getElementById("cost-hour").innerHTML = addZero(cost_hour);
+		    document.getElementById("cost-min").innerHTML = addZero(cost_min);
+		    document.getElementById("cost-sec").innerHTML = addZero(cost_sec);
+		    document.getElementById("calorie").innerHTML = addZero(calorie);
+		}
+		function default_bgImgSelect_onChange() {
+		    default_bgSRC = document.getElementById("default_bgImgSelect").value;
+		    document.getElementById("bg-img").src = document.getElementById("default_bgImgSelect").value;
+		}
+		function weather_Select_onChange() {
+		    document.getElementById("weather").src = document.getElementById("weather_Select").value;
+		}
+    	function dataURLtoBlob(dataurl) {
+			var arr = dataurl.split(',');
+			//注意base64的最后面中括号和引号是不转译的   
+			var _arr = arr[1].substring(0, arr[1].length - 2);
+			var mime = arr[0].match(/:(.*?);/)[1],
+				bstr = atob(_arr),
+				n = bstr.length,
+				u8arr = new Uint8Array(n);
+			while (n--) {
+				u8arr[n] = bstr.charCodeAt(n);
+			}
+			return new Blob([u8arr], {
+				type: mime
+			});
+		}
+        function inpt_bgimg_onClick() {
+            document.getElementById("inpt_bgimg").click();
+        }
+        function inpt_portrait_onClick() {
+            document.getElementById("inpt_portrait").click();
+        }
+        function bgimg_inpt() {
+			var oFReader = new FileReader();
+			oFReader.onload = function (event) {
+				var osrc = event.target.result;
+				if (bgSRC) {
+					URL.revokeObjectURL(bgSRC);
+				}
+				bgSRC = URL.createObjectURL(dataURLtoBlob(osrc));
+				document.getElementById("bg-img").src = bgSRC;
+				let IMG = new Image();
+				IMG.src = bgSRC;
+				IMG.onload = function(){
+					if(IMG.width / IMG.height > 0.5010){
+						document.getElementById("bg-img").style.height = "718.5px";
+						document.getElementById("bg-img").style.width = "auto";
+					}else{
+						document.getElementById("bg-img").style.height = "auto";
+						document.getElementById("bg-img").style.width = "360px";
+					}
+				}
+			}
+			var ofile = document.getElementById("inpt_bgimg").files[0];
+			oFReader.readAsDataURL(ofile);
+		}
+        function portrait_inpt() {
+			var oFReader = new FileReader();
+			oFReader.onload = function (event) {
+				var osrc = event.target.result;
+				if (ptSRC) {
+					URL.revokeObjectURL(ptSRC)
+				}
+				ptSRC = URL.createObjectURL(dataURLtoBlob(osrc));
+				document.getElementById("portrait").src = ptSRC;
+				let IMG = new Image();
+				IMG.src = ptSRC;
+				IMG.onload = function(){
+					if(IMG.width > IMG.height){
+						document.getElementById("portrait").style.height = "40px";
+						document.getElementById("portrait").style.width = "auto";
+					}else{
+						document.getElementById("portrait").style.height = "auto";
+						document.getElementById("portrait").style.width = "40px";
+					}
+				}
+			}
+			var ofile = document.getElementById("inpt_portrait").files[0];
+			oFReader.readAsDataURL(ofile);
+		}
+		function init_bgimg() {
+		    document.getElementById("bg-img").style.height = "718.5px";
+			document.getElementById("bg-img").style.width = "360px";
+			document.getElementById("bg-img").src = default_bgSRC;
+		}
+		function init_portrait() {
+		    document.getElementById("portrait").style.height = "40px";
+			document.getElementById("portrait").style.width = "40px";
+			document.getElementById("portrait").src = "images/default_portrait.png";
+		}
+		function Download() {
+		    let ele = document.getElementById("new-Img");
+            html2canvas(ele, {
+                useCORS: true,
+                logging: false,
+            }).then((canvas) => {
+                let dataurl = canvas.toDataURL('image/png');
+                let donwLink = document.createElement('a');
+                donwLink.href = dataurl;
+                donwLink.download = "keep" + (date_month) + "月" + (date_day) + "日" + "跑步打卡"; // 图片名字
+                donwLink.click();
+                let event = new MouseEvent('click');
+                donwLink.dispatchEvent(event);
+            });
+		}
+        window.onload = function() {
+            document.getElementById("bg-img").src = document.getElementById("default_bgImgSelect").value;
+            default_bgSRC = document.getElementById("default_bgImgSelect").value;
+            document.getElementById("weather").src = document.getElementById("weather_Select").value;
+            miles = Math.floor((2 + Math.random() * 3) * 100) / 100;
+            speeds = Math.floor((4 + Math.random() * 6) * 100) / 100;
+            let datetime_now = new Date();
+            date_year = datetime_now.getFullYear();
+            date_month = datetime_now.getMonth();
+            date_day = datetime_now.getDate();
+            time_hour = datetime_now.getHours();
+            time_min = datetime_now.getMinutes();
+            username = "UserName";
+            humidity = 69;
+            temperature = 21;
+            initInputData();
+            rander();
+        }
+    </script>
