@@ -847,7 +847,7 @@
             document.getElementById("body").style.overflow = "";
             document.getElementById("body").style.height = "";
             document.body.removeEventListener('touchmove', this.welcomeShowedListener, false);
-            document.getElementById("bg-img").src = canvas.toDataURL();
+            document.getElementById("bg-img").src = URL.createObjectURL(dataURLtoBlob(canvas.toDataURL()));
             document.getElementById("drawpic_overlay").style.display = "none";
         }
         //获取当前使用的背景图片的尺寸
