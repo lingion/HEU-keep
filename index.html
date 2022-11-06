@@ -801,42 +801,23 @@
             }
             canvas = document.getElementById('drawpic_canvas');
             ctx = canvas.getContext('2d');
+            var bgIMG = new Image();
             if (use_default_bg) {
-                var bgIMG = new Image();
                 bgIMG.src = "images/empty_bg.png";
-                bgIMG.onload = function () {
-                    ctx.drawImage(bgIMG, 0, 0, current_img_width, current_img_height);
-                    drawdown = false;
-                    is_bs = false;
-                    convasData = null;
-                    canvas.addEventListener('pointerdown', handlePointerDown);
-                    canvas.addEventListener('pointermove', handlePointerMove);
-                    canvas.addEventListener('pointerup', handlePointerUp);
-                }
             } else {
-                var bgIMG = document.getElementById("bg-img");
-                buffer_canvas = document.getElementById("buffer_canvas");
-                buffer_ctx = buffer_canvas.getContext('2d');
-                buffer_canvas.width = current_img_width;
-                buffer_canvas.height = current_img_height;
-                buffer_ctx.drawImage(bgIMG, 0, 0, current_img_width, current_img_height);
-                buffer_imgdata = buffer_ctx.getImageData(0, 0, current_img_width, current_img_height);
-                var cImage = ctx.createImageData(current_img_width, current_img_height);
-                for (var i = 0; i < buffer_imgdata.data.length; i += 4) {
-                    cImage.data[i + 0] = buffer_imgdata.data[i + 0];
-                    cImage.data[i + 1] = buffer_imgdata.data[i + 1];
-                    cImage.data[i + 2] = buffer_imgdata.data[i + 2];
-                    cImage.data[i + 3] = buffer_imgdata.data[i + 3];
-                }
-                ctx.putImageData(cImage, 0, 0, 0, 0, current_img_width, current_img_height);
+                bgIMG.src = bgSRC;
+            }
+            bgIMG.onload = function () {
+                ctx.drawImage(bgIMG, 0, 0, current_img_width, current_img_height);
                 drawdown = false;
                 is_bs = false;
                 convasData = null;
                 canvas.addEventListener('pointerdown', handlePointerDown);
                 canvas.addEventListener('pointermove', handlePointerMove);
                 canvas.addEventListener('pointerup', handlePointerUp);
-            }
+                }
         }
+        
         //这三个方法的具体内容, 取决于是否处在"路径变色"模式
         //所以这里先占个位
         var handlePointerDown, handlePointerMove, handlePointerUp;
@@ -890,7 +871,6 @@
                 width: buffer_canvas.width,
                 scale: scale,
             }).then((buffer_canvas) => {
-                console.log(buffer_canvas);
                 let dataurl = buffer_canvas.toDataURL('image/png');
                 let donwLink = document.createElement('a');
                 donwLink.href = URL.createObjectURL(dataURLtoBlob(dataurl));
