@@ -16,6 +16,10 @@
             position: relative;
             background-color: #fff;
         }
+        image {
+            max-width: none;
+            max-height: none;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -40,77 +44,65 @@
         }
         #main-div {
             margin-top: 0px;
-            width: 100%;
+            max-width: 100%;
             display: flex;
             flex-wrap: wrap;
+            width: 100%;
             justify-content: space-around;
         }
-        #main-div #new-img-wrap {
-            position: relative;
+        #main-div .new-img {
             width: 360px;
             height: 719px;
-        }
-        #main-div .new-img {
-            width: 1080px;
-            height: 2157px;
-            position: absolute;
-            -webkit-transform: scale(0.33);
-            -moz-transform: scale(0.33);
-            -ms-transform: scale(0.33);
-            transform: scale(0.33);
-            left: -100%;
-            top: -100%;
+            position: relative;
         }
         .new-img #gui-img {
             position: absolute;
             top: 0;
             left: 0;
-            width: 1080px;
-            height: 2157px;
+            width: 360px;
+            height: 719px;
             vertical-align: top;
         }
         .new-img .bgimgwrap {
-            width: 1080px;
-            height: 2157px;
+            width: 360px;
+            height: 719px;
             position: absolute;
             display: flex;
             overflow: hidden;
             text-align: center;
             justify-content: center;
             align-items: center;
-            top: 0px;
-            left: 0px;
         }
         .new-img .innerbgimg {
-            width: 1080px;
-            height: 2157px;
-            margin: 0 auto;
-            display: block;
+            width: 360px;
+            height: 719px;
+			margin: 0 auto;
+            display: flex;
         }
         .new-img .portrait-wrap {
-            width: 120px;
-            height: 120px;
+            width: 40px;
+            height: 40px;
             position: absolute;
             display: flex;
             overflow: hidden;
             text-align: center;
             justify-content: center;
             align-items: center;
-            top: 1005px;
-            left: 852px;
-            border-radius: 60px;
+            top: 335px;
+            left: 284px;
+            border-radius: 20px;
         }
         .new-img .portrait {
-            width: 120px;
-            height: 120px;
+            width: 40px;
+            height: 40px;
             margin: 0 auto;
             display: block;
         }
         .new-img .weather-imgwrap {
-            height: 44px;
-            width: 44px;
-            top: 1281px;
-            left: 714px;
+            height: 14.67px;
+            width: 14.67px;
+            top: 427px;
+            left: 238px;
             position: absolute;
             display: flex;
             overflow: hidden;
@@ -119,8 +111,8 @@
             align-items: center;
         }
         .new-img .weather {
-            width: 44px;
-            height: 44px;
+            width: 14.67px;
+            height: 14.67px;
             margin: 0 auto;
             display: block;
         }
@@ -128,83 +120,84 @@
             position: absolute;
         }
         .username {
-            top: 1155px;
-            right: 96px;
-            font-size: 39px;
+            top: 385px;
+            right: 32px;
+            font-size: 13px;
         }
         .mile {
             color: #57525d;
             font-family: 'keeprun';
-            top: 1162px;
-            left: 95px;
+            top: 387.33px;
+            left: 31.67px;
         }
         .mile .mile-data {
-            font-size: 150px;
+            font-size: 50px;
             transform: scale(1, 0.85);
             transform-origin: 0 0;
             margin: 0 auto;
-            letter-spacing: -2px;
+            letter-spacing: -1px;
             display: inline-block;
             position: relative;
         }
         .mile .gongli {
             color: #57525d;
-            font-size: 32px;
+            font-size: 10.67px;
             font-family: 'keeprun';
-            margin-left: 14px;
-            bottom: 23px;
+            margin-left: 4.67px;
+            bottom: 7.67px;
             position: relative;
             display: inline-block;
         }
         .datetime {
             color: #a2a2a2;
-            font-size: 39px;
+            font-size: 13px;
             font-family: "Segoe UI", Arial, Helvetica, sans-serif;
         }
         .date {
-            top: 1221px;
-            left: 666px;
+            top: 407px;
+            left: 222px;
         }
         .time {
-            top: 1221px;
-            left: 888px;
+            top: 407px;
+            left: 296px;
         }
         .env {
             color: #a2a2a2;
-            font-size: 39px;
+            font-size: 13px;
             font-family: "Segoe UI", Arial, Helvetica, sans-serif;
-            letter-spacing: -1.5px;
+            letter-spacing: -0.5px;
         }
         .temperature {
-            top: 1279px;
-            left: 756px;
+            top: 426.33px;
+            left: 252px;
         }
         .humidity {
-            top: 1279px;
-            left: 910px;
+            top: 426.33px;
+            left: 303.33px;
         }
         .speed-time {
             color: #58505b;
-            font-size: 85px;
+            font-size: 28.33px;
             font-family: 'keeprun';
             transform: scale(1, 0.85);
         }
         .speed {
-            top: 1440px;
-            left: 96px;
-            letter-spacing: -1.5px;
+            top: 480px;
+            left: 32px;
+            letter-spacing: -0.5px;
         }
         .cost-time {
-            top: 1440px;
-            left: 420px;
-            letter-spacing: -1.5px;
+            top: 480px;
+            left: 140px;
+            letter-spacing: -0.5px;
         }
         .calorie {
-            top: 1440px;
-            right: 96px;
+            top: 480px;
+            right: 32px;
         }
         .set-data {
-            width: 350px;
+            width: 360px;
+            font-size: 1rem;
         }
         input {
             width: 55px;
@@ -213,6 +206,7 @@
             border-radius: 5px;
             border: 1px solid #038957;
             vertical-align: middle;
+            font-size: 15px;
         }
          :focus-visible {
             outline: #15b77b auto 1px;
@@ -222,13 +216,11 @@
         }
         .time-inp {
             width: 20px;
-            margin-left: 4px;
+            margin-left: 1px;
             margin-right: 1px;
         }
         .year-inp {
             width: 40px;
-            margin-left: 4px;
-            margin-right: 1px;
         }
         button {
             width: 80px;
@@ -238,7 +230,7 @@
             border-radius: 9px;
             line-height: 16px;
             border: 2px solid #c5e4a4;
-            font-size: 16px;
+            font-size: 15px;
         }
         .save-btn {
             width: 180px;
@@ -272,7 +264,7 @@
             border-radius: 9px;
             line-height: 16px;
             border: 2px solid #c5e4a4;
-            font-size: 16px;
+            font-size: 15px;
         }
         .warning {
             font-size: 20px;
@@ -343,28 +335,26 @@
 </head>
 <body id="body">
     <div id="main-div">
-        <div id="new-img-wrap">
-            <div id="new-Img" class="new-img">
-                <div class="bgimgwrap">
-                    <img src="" class="innerbgimg" id="bg-img" />
-                </div>
-                <img src="" id="gui-img" />
-                <div class="portrait-wrap">
-                    <img class="portrait" id="portrait" src="" />
-                </div>
-                <div class="weather-imgwrap">
-                    <img src="" class="weather" id="weather" src="" />
-                </div>
-                <span class="username" id="username">UserName</span>
-                <span class="mile"><span id="mile" class="mile-data">0.00</span><span class="gongli">公里</span></span>
-                <span class="datetime date" id="date">0000/00/00</span>
-                <span class="datetime time" id="time">00:00</span>
-                <span class="env temperature" id="temperature">00</span>
-                <span class="env humidity" id="humidity">00</span>
-                <span class="speed-time speed" id="speed">00'00"</span>
-                <span class="speed-time cost-time" id="cost-time">00:00:00</span>
-                <span class="speed-time calorie" id="calorie">0</span>
+        <div id="new-Img" class="new-img">
+            <div class="bgimgwrap" id="bgimgwrap">
+                <img src="" class="innerbgimg" id="bg-img" />
             </div>
+            <img src="" id="gui-img" />
+            <div class="portrait-wrap" id="portrait-wrap">
+                <img class="portrait" id="portrait" src="" />
+            </div>
+            <div class="weather-imgwrap">
+                <img src="" class="weather" id="weather" src="" />
+            </div>
+            <span class="username" id="username">UserName</span>
+            <span class="mile"><span id="mile" class="mile-data">0.00</span><span class="gongli">公里</span></span>
+            <span class="datetime date" id="date">0000/00/00</span>
+            <span class="datetime time" id="time">00:00</span>
+            <span class="env temperature" id="temperature">00</span>
+            <span class="env humidity" id="humidity">00</span>
+            <span class="speed-time speed" id="speed">00'00"</span>
+            <span class="speed-time cost-time" id="cost-time">00:00:00</span>
+            <span class="speed-time calorie" id="calorie">0</span>
         </div>
         <div class="set-data">
             <h4>数据设置</h4>
@@ -522,6 +512,15 @@
         var start_sign_src = "images/start.png" + "?_=" + new Date().getTime();
         var end_sign_src = "images/end.png" + "?_=" + new Date().getTime();
 
+        var frameWidth = 300;
+        var frameHeight = 600;
+
+        var bgWidth = 360;
+        var bgHeight = 719;
+
+        let ptWidth = 40;
+        let ptHeight = 40;
+
         function fract(num) {
             return num - Math.trunc(num);
         }
@@ -649,18 +648,18 @@
                 if (bgSRC) {
                     URL.revokeObjectURL(bgSRC);
                 }
-                bgSRC = bgimg_osrc;
+                bgSRC = URL.createObjectURL(dataURLtoBlob(bgimg_osrc));
                 document.getElementById("bg-img").src = bgSRC;
                 let IMG = new Image();
                 IMG.src = bgSRC;
                 IMG.onload = function(){
                     getNaturalSize();
-                    if(parseInt(IMG.width) / parseInt(IMG.height) > 0.5010){
-                        document.getElementById("bg-img").style.height = "2157px";
-                        document.getElementById("bg-img").style.width = "auto";
-                    }else{
-                        document.getElementById("bg-img").style.height = "auto";
-                        document.getElementById("bg-img").style.width = "1080px";
+                    if(parseInt(IMG.width) / parseInt(IMG.height) > 0.5010) {
+                        document.getElementById("bg-img").style.height = String(bgHeight) + "px";
+                        document.getElementById("bg-img").style.width = String(parseInt(IMG.width) * bgHeight / parseInt(IMG.height)) + "px";
+                    } else {
+                        document.getElementById("bg-img").style.height = String(parseInt(IMG.height) * bgWidth / parseInt(IMG.width)) + "px";
+                        document.getElementById("bg-img").style.width = String(bgWidth) + "px";
                     }
                     use_default_bg = false;
                 }
@@ -676,17 +675,17 @@
                 if (ptSRC) {
                     URL.revokeObjectURL(ptSRC)
                 }
-                ptSRC = portrait_osrc;
+                ptSRC = URL.createObjectURL(dataURLtoBlob(portrait_osrc));
                 document.getElementById("portrait").src = ptSRC;
                 let IMG = new Image();
                 IMG.src = ptSRC;
-                IMG.onload = function(){
+                IMG.onload = function() {
                     if(parseInt(IMG.width) / parseInt(IMG.height) > 1){
-                        document.getElementById("portrait").style.height = "120px";
-                        document.getElementById("portrait").style.width = "auto";
+                        document.getElementById("portrait").style.height = String(ptHeight) + "px";
+                        document.getElementById("portrait").style.width = String(parseInt(IMG.width) * ptHeight / parseInt(IMG.height)) + "px";
                     }else{
-                        document.getElementById("portrait").style.height = "auto";
-                        document.getElementById("portrait").style.width = "120px";
+                        document.getElementById("portrait").style.height = String(parseInt(IMG.height) * ptWidth / parseInt(IMG.width)) + "px";
+                        document.getElementById("portrait").style.width = String(ptWidth) + "px";
                     }
                 }
             }
@@ -695,27 +694,27 @@
         }
         //恢复默认背景图片
         function init_bgimg() {
-            document.getElementById("bg-img").style.height = "2157px";
-            document.getElementById("bg-img").style.width = "1080px";
+            document.getElementById("bg-img").style.height = bgHeight;
+            document.getElementById("bg-img").style.width = bgWidth;
             document.getElementById("bg-img").src = default_bgSRC;
             getNaturalSize();
             use_default_bg = true;
         }
         //恢复默认头像
         function init_portrait() {
-            document.getElementById("portrait").style.height = "120px";
-            document.getElementById("portrait").style.width = "120px";
+            document.getElementById("portrait").style.height = ptHeight;
+            document.getElementById("portrait").style.width = ptHeight;
             document.getElementById("portrait").src = default_portrait_scr;
         }
 
         /*----- 以下为[绘制自定义轨迹]用到的方法 -----*/
         function inpt_drawbtn_onClick() {
             if(current_img_width / current_img_height > 0.5010) {
-                draw_suofang = current_img_height / 600;
-                document.getElementById("drawpic_canvas_wrap").innerHTML = '<canvas id="drawpic_canvas" width="' + String(current_img_width) + '" height="' + String(current_img_height) + '" style="width: ' + String(Math.floor(current_img_width * (600 / current_img_height))) + 'px; height: 600px;"></canvas>';
+                draw_suofang = current_img_height / frameHeight;
+                document.getElementById("drawpic_canvas_wrap").innerHTML = '<canvas id="drawpic_canvas" width="' + String(current_img_width) + '" height="' + String(current_img_height) + '" style="width: ' + String(Math.floor(current_img_width * (frameHeight / current_img_height))) + 'px; height: ' + String(frameHeight) + 'px;"></canvas>';
             } else {
-                draw_suofang = current_img_width / 300;
-                document.getElementById("drawpic_canvas_wrap").innerHTML = '<canvas id="drawpic_canvas" width="' + String(current_img_width) + '" height="' + String(current_img_height) + '" style="width: 300px; height: ' + String(Math.floor(current_img_height * (300 / current_img_width))) + 'px;"></canvas>';
+                draw_suofang = current_img_width / frameWidth;
+                document.getElementById("drawpic_canvas_wrap").innerHTML = '<canvas id="drawpic_canvas" width="' + String(current_img_width) + '" height="' + String(current_img_height) + '" style="width: ' + String(frameWidth) + 'px; height: ' + String(Math.floor(current_img_height * (frameWidth / current_img_width))) + 'px;"></canvas>';
             }
             document.getElementById("drawpic_overlay").style.display = "flex";
             document.getElementById("body").style.overflow = "hidden";
@@ -834,7 +833,7 @@
                 }
                 handlePointerMove = (e) => {
                     if (drawdown) {
-                        ctx.lineTo(e.offsetX * draw_suofang, e.offsetY * draw_suofang)
+                        ctx.lineTo(e.offsetX * draw_suofang, e.offsetY * draw_suofang);
                         ctx.strokeStyle = "rgb(38, 201, 154)".toString();
                         ctx.lineJoin = "round";
                         ctx.lineCap = "round";
