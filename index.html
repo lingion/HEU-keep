@@ -99,8 +99,8 @@
             display: block;
         }
         .new-img .weather-imgwrap {
-            height: 14.67px;
-            width: 14.67px;
+            height: 14px;
+            width: 14px;
             top: 427px;
             left: 238px;
             position: absolute;
@@ -111,8 +111,8 @@
             align-items: center;
         }
         .new-img .weather {
-            width: 14.67px;
-            height: 14.67px;
+            width: 14px;
+            height: 14px;
             margin: 0 auto;
             display: block;
         }
@@ -121,14 +121,28 @@
         }
         .username {
             top: 385px;
-            right: 32px;
+            right: 34px;
             font-size: 13px;
+        }
+        .keep-title-0 {
+            top: 361px;
+            left: 30px;
+            color: #a2a2a2;
+            font-size: 12px;
+            font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+        }
+        .keep-title {
+            top: 361px;
+            left: 69px;
+            color: #a2a2a2;
+            font-size: 12px;
+            font-family: "Segoe UI", Arial, Helvetica, sans-serif;
         }
         .mile {
             color: #57525d;
             font-family: 'keeprun';
-            top: 387.33px;
-            left: 31.67px;
+            top: 387px;
+            left: 32px;
         }
         .mile .mile-data {
             font-size: 50px;
@@ -143,8 +157,8 @@
             color: #57525d;
             font-size: 10.67px;
             font-family: 'keeprun';
-            margin-left: 4.67px;
-            bottom: 7.67px;
+            margin-left: 5px;
+            bottom: 8px;
             position: relative;
             display: inline-block;
         }
@@ -168,16 +182,16 @@
             letter-spacing: -0.5px;
         }
         .temperature {
-            top: 426.33px;
+            top: 425.5px;
             left: 252px;
         }
         .humidity {
-            top: 426.33px;
-            left: 303.33px;
+            top: 425.5px;
+            left: 303px;
         }
         .speed-time {
             color: #58505b;
-            font-size: 28.33px;
+            font-size: 28px;
             font-family: 'keeprun';
             transform: scale(1, 0.85);
         }
@@ -212,6 +226,9 @@
             outline: #15b77b auto 1px;
         }
         .username-inp {
+            width: 125px;
+        }
+        .keep-title-inp {
             width: 125px;
         }
         .time-inp {
@@ -265,6 +282,9 @@
             line-height: 16px;
             border: 2px solid #c5e4a4;
             font-size: 15px;
+        }
+        .guijiSelect {
+            display: none;
         }
         .warning {
             font-size: 20px;
@@ -347,6 +367,8 @@
                 <img src="" class="weather" id="weather" src="" />
             </div>
             <span class="username" id="username">UserName</span>
+            <span class="keep-title-0" id="keep-title-0">Keep</span>
+            <span class="keep-title" id="keep-title">户外跑步</span>
             <span class="mile"><span id="mile" class="mile-data">0.00</span><span class="gongli">公里</span></span>
             <span class="datetime date" id="date">0000/00/00</span>
             <span class="datetime time" id="time">00:00</span>
@@ -369,6 +391,11 @@
                     <button onclick="inpt_portrait_onClick()" class="inpt-btn">选择图片</button>
                     <input style="display:none;" type="file" accept="image/*" id="inpt_portrait" onchange="portrait_inpt()" />
                     <button onclick="init_portrait()" class="init-btn">恢复默认</button>
+                </li>
+                <li>
+                    <label>标题：</label>
+                    <span>keep•</span>
+                    <input id="inpt_keep_title" onchange="setData()" type="text" class="keep-title-inp">
                 </li>
                 <hr />
                 <li>
@@ -410,12 +437,11 @@
                 </li>
                 <hr />
                 <li>
-                    <label>背景图片：</label>
+                    <label>背景：</label>
                     <select onchange="default_bgImgSelect_onChange()" id="default_bgImgSelect">
-                        <option value="images/bg1.png">预设1</option>
-                        <option value="images/bg2.png">预设2</option>
-                        <option value="images/bg3.png">预设3</option>
-                        <option value="images/bg4.png">预设4</option>
+                        <option value="guiji_Select_1">南体育场</option>
+                        <option value="guiji_Select_2">军工操场</option>
+                        <option value="guiji_Select_3">北体育场</option>
                     </select>
                 </li>
                 <li>
@@ -423,6 +449,22 @@
                     <button onclick="inpt_bgimg_onClick()">选择图片</button>
                     <input style="display:none;" type="file" accept="image/*" id="inpt_bgimg" onchange="bgimg_inpt()" />
                     <button onclick="init_bgimg()" class="init-btn">恢复默认</button>
+                </li>
+                <li>
+                    <label>预设轨迹：</label>
+                    <select onchange="guijiSelect_onChange()" id="guiji_Select_1" class="guijiSelect">
+                        <option value="['images/bg1_1.png', 'images/bg1_empty.png']">预设1</option>
+                        <option value="['images/bg1_2.png', 'images/bg1_empty.png']">预设2</option>
+                        <option value="['images/bg1_3.png', 'images/bg1_empty.png']">预设3</option>
+                        <option value="['images/bg1_4.png', 'images/bg1_empty.png']">预设4</option>
+                        <option value="['images/bg1_empty.png', 'images/bg1_empty.png']">空</option>
+                    </select>
+                    <select onchange="guijiSelect_onChange()" id="guiji_Select_2" class="guijiSelect">
+                        <option value="['images/bg2_empty.png', 'images/bg2_empty.png']">空</option>
+                    </select>
+                    <select onchange="guijiSelect_onChange()" id="guiji_Select_3" class="guijiSelect">
+                        <option value="['images/bg3_empty.png', 'images/bg3_empty.png']">空</option>
+                    </select>
                 </li>
                 <li>
                     <label>绘制轨迹：</label>
@@ -482,6 +524,9 @@
                         <span>2. 点击"保存图片"即可自动生成截图并保存到本地.</span>
                         <br />
                         <br />
+                        <span>keep运动截图生成&ensp;v2.41.1&ensp;(636eb2dd)</span>
+                        <br />
+                        <br />
                         <span>本项目仓库地址: <a href="https://gitee.com/fyhb/keep" target="_blank">https://gitee.com/fyhb/keep</a>.</span>
                         <br />
                         <span>※本项目修改自<a href="https://gitee.com/jimaske/njupt-keep" target="_blank">南邮keep跑步打卡截图修改</a>.</span>
@@ -496,9 +541,10 @@
     </div>
     <script src="./html2canvas.min.js"></script>
     <script type="text/javascript">
-        var miles, speeds, username, date_year, date_month, date_day, time_hour, time_min, temperature, humidity, savePic_width;
+        var miles, speeds, username, keep_title, date_year, date_month, date_day, time_hour, time_min, temperature, humidity, savePic_width;
         var bgSRC = "", ptSRC = "";
-        var default_bgSRC = "";
+        var display_guijiSelect_id;
+        var default_bgSRC = [];
         var use_default_bg = true;
 
         var canvas, ctx, drawdown, convasData, current_img_width, current_img_height, draw_suofang, buffer_canvas;
@@ -535,6 +581,7 @@
         //将输入框的输入内容存储到对应的变量中
         function setData() {
             username = document.getElementById("inpt_username").value;
+            keep_title = document.getElementById("inpt_keep_title").value;
             miles = parseFloat(document.getElementById("inpt_miles").value);
             speeds = parseFloat(document.getElementById("inpt_speeds").value);
             date_year = parseInt(document.getElementById("inpt_year").value);
@@ -554,6 +601,7 @@
         //初始化输入框, 将变量的内容放到输入框中
         function initInputData() {
             document.getElementById("inpt_username").value = username;
+            document.getElementById("inpt_keep_title").value = keep_title;
             document.getElementById("inpt_miles").value = miles;
             document.getElementById("inpt_speeds").value = speeds;
             document.getElementById("inpt_year").value = date_year;
@@ -571,7 +619,10 @@
             document.getElementById("portrait").src = default_portrait_scr;
             let bgimg_select = document.getElementById("default_bgImgSelect");
             for (let i = 0; i < bgimg_select.options.length; i ++) {
-                bgimg_select.options[i].value = bgimg_select.options[i].value + "?_=" + new Date().getTime();
+                let guijiSelect = document.getElementById(bgimg_select.options[i].value);
+                for (let j = 0; j < guijiSelect.options.length; j ++) {
+                    guijiSelect.options[j].value = '[\"' + String(eval(guijiSelect.options[j].value)[0] + "?_=" + new Date().getTime()) + '\", \"' + String(eval(guijiSelect.options[j].value)[1] + "?_=" + new Date().getTime()) + '\"]';
+                }
             }
             let weather_select = document.getElementById("weather_Select");
             for (let i = 0; i < weather_select.options.length; i ++) {
@@ -597,6 +648,8 @@
             document.getElementById("temperature").innerHTML = String(temperature) + "℃";
             document.getElementById("humidity").innerHTML = String(humidity) + "%";
             document.getElementById("username").innerHTML = username;
+            document.getElementById("keep-title").innerHTML = keep_title;
+            
             document.getElementById("speed").innerHTML = String(addZero(speeds_int)) + "'" + String(addZero(speeds_dec)) + '"';
             document.getElementById("cost-time").innerHTML = String(addZero(cost_hour)) + ":" + String(addZero(cost_min)) + ":" + String(addZero(cost_sec));
             document.getElementById("calorie").innerHTML = addZero(calorie);
@@ -604,13 +657,18 @@
 
         //选择预设图片
         function default_bgImgSelect_onChange() {
-            default_bgSRC = document.getElementById("default_bgImgSelect").value;
-            document.getElementById("bg-img").src = document.getElementById("default_bgImgSelect").value;
-            document.getElementById("bg-img").onload = function() {
-                getNaturalSize();
+            if (display_guijiSelect_id) {
+                document.getElementById(display_guijiSelect_id).style.display = "none";
             }
+            display_guijiSelect_id = document.getElementById("default_bgImgSelect").value;
+            document.getElementById(display_guijiSelect_id).style.display = "inline"
+            default_bgSRC = eval(document.getElementById(display_guijiSelect_id).value);
+            setbgImg(default_bgSRC[0]);
         }
-
+        function guijiSelect_onChange() {
+            default_bgSRC = eval(document.getElementById(display_guijiSelect_id).value);
+            setbgImg(default_bgSRC[0]);
+        }
         //选择天气
         function weather_Select_onChange() {
             document.getElementById("weather").src = document.getElementById("weather_Select").value;
@@ -649,24 +707,33 @@
                     URL.revokeObjectURL(bgSRC);
                 }
                 bgSRC = URL.createObjectURL(dataURLtoBlob(bgimg_osrc));
-                document.getElementById("bg-img").src = bgSRC;
                 let IMG = new Image();
                 IMG.src = bgSRC;
-                IMG.onload = function(){
-                    getNaturalSize();
-                    if(parseInt(IMG.width) / parseInt(IMG.height) > 0.5010) {
-                        document.getElementById("bg-img").style.height = String(bgHeight) + "px";
-                        document.getElementById("bg-img").style.width = String(parseInt(IMG.width) * bgHeight / parseInt(IMG.height)) + "px";
-                    } else {
-                        document.getElementById("bg-img").style.height = String(parseInt(IMG.height) * bgWidth / parseInt(IMG.width)) + "px";
-                        document.getElementById("bg-img").style.width = String(bgWidth) + "px";
-                    }
-                    use_default_bg = false;
-                }
+                setbgImg(bgSRC);
+                use_default_bg = false;
             }
             var bgimg_ofile = document.getElementById("inpt_bgimg").files[0];
             bgimg_oFReader.readAsDataURL(bgimg_ofile);
         }
+        function setbgImg(src) {
+            document.getElementById("bg-img").src = src;
+            document.getElementById("bg-img").onload = function() {
+                getNaturalSize();
+            }
+            let IMG = new Image();
+            IMG.src = src;
+            IMG.onload = function(){
+                getNaturalSize();
+                if(parseInt(IMG.width) / parseInt(IMG.height) > 0.5010) {
+                    document.getElementById("bg-img").style.height = String(bgHeight) + "px";
+                    document.getElementById("bg-img").style.width = String(parseInt(IMG.width) * bgHeight / parseInt(IMG.height)) + "px";
+                } else {
+                    document.getElementById("bg-img").style.height = String(parseInt(IMG.height) * bgWidth / parseInt(IMG.width)) + "px";
+                    document.getElementById("bg-img").style.width = String(bgWidth) + "px";
+                }
+            }
+        }
+
         //选择并设置头像
         function portrait_inpt() {
             var portrait_oFReader = new FileReader();
@@ -694,10 +761,7 @@
         }
         //恢复默认背景图片
         function init_bgimg() {
-            document.getElementById("bg-img").style.height = bgHeight;
-            document.getElementById("bg-img").style.width = bgWidth;
-            document.getElementById("bg-img").src = default_bgSRC;
-            getNaturalSize();
+            setbgImg(default_bgSRC[0]);
             use_default_bg = true;
         }
         //恢复默认头像
@@ -863,7 +927,7 @@
             ctx = canvas.getContext('2d');
             var bgIMG = new Image();
             if (use_default_bg) {
-                bgIMG.src = empty_bg_src;
+                bgIMG.src = default_bgSRC[1];
             } else {
                 bgIMG.src = bgSRC;
             }
@@ -951,12 +1015,13 @@
             date_day = datetime_now.getDate();
             time_hour = datetime_now.getHours();
             time_min = datetime_now.getMinutes();
-            username = "UserName";
+            username = "用户名";
+            keep_title = "户外跑步";
             humidity = 23;
             temperature = 12;
             bs_prob = 0.2;
-            bs_range_min = 5;
-            bs_range_max = 20;
+            bs_range_min = 15;
+            bs_range_max = 40;
             savePic_width = 1080;
 
             initInputData();
