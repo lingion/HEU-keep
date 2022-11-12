@@ -101,7 +101,7 @@
         .new-img .weather-imgwrap {
             height: 14px;
             width: 14px;
-            top: 427px;
+            top: 426.5px;
             left: 238px;
             position: absolute;
             display: flex;
@@ -124,16 +124,10 @@
             right: 34px;
             font-size: 13px;
         }
-        .keep-title-0 {
-            top: 361px;
-            left: 30px;
-            color: #a2a2a2;
-            font-size: 12px;
-            font-family: "Segoe UI", Arial, Helvetica, sans-serif;
-        }
         .keep-title {
             top: 361px;
-            left: 69px;
+            left: 30px;
+            line-height: 16px;
             color: #a2a2a2;
             font-size: 12px;
             font-family: "Segoe UI", Arial, Helvetica, sans-serif;
@@ -182,11 +176,11 @@
             letter-spacing: -0.5px;
         }
         .temperature {
-            top: 425.5px;
+            top: 424px;
             left: 252px;
         }
         .humidity {
-            top: 425.5px;
+            top: 424px;
             left: 303px;
         }
         .speed-time {
@@ -367,7 +361,6 @@
                 <img src="" class="weather" id="weather" src="" />
             </div>
             <span class="username" id="username">UserName</span>
-            <span class="keep-title-0" id="keep-title-0">Keep</span>
             <span class="keep-title" id="keep-title">户外跑步</span>
             <span class="mile"><span id="mile" class="mile-data">0.00</span><span class="gongli">公里</span></span>
             <span class="datetime date" id="date">0000/00/00</span>
@@ -453,11 +446,11 @@
                 <li>
                     <label>预设轨迹：</label>
                     <select onchange="guijiSelect_onChange()" id="guiji_Select_1" class="guijiSelect">
-                        <option value="['images/bg1_1.png', 'images/bg1_empty.png']">预设1</option>
-                        <option value="['images/bg1_2.png', 'images/bg1_empty.png']">预设2</option>
-                        <option value="['images/bg1_3.png', 'images/bg1_empty.png']">预设3</option>
-                        <option value="['images/bg1_4.png', 'images/bg1_empty.png']">预设4</option>
-                        <option value="['images/bg1_empty.png', 'images/bg1_empty.png']">空</option>
+                        <option value="['images/bg1_1.png', 'images/bg1_empty2.png']">预设1</option>
+                        <option value="['images/bg1_2.png', 'images/bg1_empty2.png']">预设2</option>
+                        <option value="['images/bg1_3.png', 'images/bg1_empty2.png']">预设3</option>
+                        <option value="['images/bg1_4.png', 'images/bg1_empty2.png']">预设4</option>
+                        <option value="['images/bg1_empty2.png', 'images/bg1_empty2.png']">空</option>
                     </select>
                     <select onchange="guijiSelect_onChange()" id="guiji_Select_2" class="guijiSelect">
                         <option value="['images/bg2_empty.png', 'images/bg2_empty.png']">空</option>
@@ -524,7 +517,7 @@
                         <span>2. 点击"保存图片"即可自动生成截图并保存到本地.</span>
                         <br />
                         <br />
-                        <span>keep运动截图生成&ensp;v2.41.1&ensp;(636eb2dd)</span>
+                        <span>keep运动截图生成&ensp;v2.41.2&ensp;(636f3edb)</span>
                         <br />
                         <br />
                         <span>本项目仓库地址: <a href="https://gitee.com/fyhb/keep" target="_blank">https://gitee.com/fyhb/keep</a>.</span>
@@ -648,7 +641,7 @@
             document.getElementById("temperature").innerHTML = String(temperature) + "℃";
             document.getElementById("humidity").innerHTML = String(humidity) + "%";
             document.getElementById("username").innerHTML = username;
-            document.getElementById("keep-title").innerHTML = keep_title;
+            document.getElementById("keep-title").innerHTML = "Keep&nbsp;•&nbsp;" + keep_title;
             
             document.getElementById("speed").innerHTML = String(addZero(speeds_int)) + "'" + String(addZero(speeds_dec)) + '"';
             document.getElementById("cost-time").innerHTML = String(addZero(cost_hour)) + ":" + String(addZero(cost_min)) + ":" + String(addZero(cost_sec));
