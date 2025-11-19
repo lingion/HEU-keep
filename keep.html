@@ -11,7 +11,78 @@
 
         gtag('config', 'G-4C56GQP4ZL');
     </script>
+/**
+ * 获取哈尔滨工程大学实时天气
+ * 使用 Open-Meteo API (免费，无需Key)
+ */
+async function getHeuWeather() {
+    // 哈尔滨工程大学南体育场附近坐标
+    const lat = 45.773;
+    const lon = 126.679;
+    
+    // API 地址：获取温度、湿度、天气代码
+    const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FShanghai`;
 
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error('Weather API failed');
+        
+        const data = await response.json();
+        const current = data.current;
+
+        // 1. 获取 DOM 元素
+        const tempInp = document.getElementById('inpt_temperature');
+        const humInp = document.getElementById('inpt_humidity');
+        const weatherSelect = document.getElementById('weather_Select');
+        
+        // 2. 更新数值
+        // 写入温度 (四舍五入)
+        if (tempInp) {
+            tempInp.value = Math.round(current.temperature_2m);
+            // 触发 onchange 事件，确保预览图同步更新
+            tempInp.dispatchEvent(new Event('change'));
+        }
+
+        // 写入湿度 (加上百分号)
+        if (humInp) {
+            humInp.value = Math.round(current.relative_humidity_2m) + '%';
+            humInp.dispatchEvent(new Event('change'));
+        }
+
+        // 3. 自动切换天气图标
+        // Open-Meteo WMO Weather Code 映射到 Keep 的图标
+        // 0-1: 晴天, 2: 多云, 3: 阴天, 45+: 雾/雨/雪等归为阴雨
+        const wCode = current.weather_code;
+        let weatherVal = "images/weather1.png"; // 默认晴
+
+        if (wCode <= 1) {
+            weatherVal = "images/weather1.png"; // 晴
+        } else if (wCode === 2) {
+            weatherVal = "images/weather2.png"; // 多云
+        } else {
+            weatherVal = "images/weather3.png"; // 阴/雨/雪
+        }
+
+        if (weatherSelect) {
+            weatherSelect.value = weatherVal;
+            // 触发 onchange 以更新图片
+            weatherSelect.dispatchEvent(new Event('change')); 
+        }
+
+        console.log(`已更新哈工程天气: ${current.temperature_2m}°C, ${weatherVal}`);
+
+    } catch (error) {
+        console.error("天气获取失败:", error);
+        // 失败时的兜底数据
+        document.getElementById('inpt_temperature').value = "20";
+        document.getElementById('inpt_humidity').value = "45%";
+    }
+}
+
+// 页面加载完成后执行
+window.addEventListener('DOMContentLoaded', () => {
+    getHeuWeather();
+});
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
