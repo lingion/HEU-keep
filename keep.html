@@ -17,28 +17,28 @@
     <title>KEEPro - 运动截图生成</title>
     <link rel="icon" href="./favicon.ico">
     <link rel="stylesheet" href="./css/styles.css">
-    <link rel="preload" href="./DINCond-Bold.otf" as="font" type="font/otf" crossorigin>
 
     <!-- 🎨 嵌入式优化样式：仅针对控制面板，不影响截图生成 -->
     <style>
-        /* 覆盖原有的宽大间距 */
+        /* 覆盖原有的宽大间距，让面板更紧凑 */
         .set-data .background-green, 
         .set-data .background-blue, 
         .set-data .background-color-block2 {
-            padding: 12px 15px !important; /* 缩小内边距 */
-            margin-bottom: 12px !important; /* 缩小卡片间距 */
+            padding: 10px 12px !important; 
+            margin-bottom: 10px !important;
             border-radius: 8px;
         }
         
-        /* 紧凑布局容器 */
+        /* 紧凑行布局 */
         .compact-row {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
         
+        /* 双列网格 */
         .compact-grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -51,46 +51,51 @@
             min-width: auto;
             margin-right: 4px;
             color: #555;
+            font-weight: bold;
         }
         
         .set-data input[type="text"], 
         .set-data select {
-            height: 28px; /* 降低输入框高度 */
-            padding: 2px 6px;
+            height: 26px;
+            padding: 2px 4px;
             font-size: 13px;
-            border: 1px solid #ddd;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
 
-        /* 按钮组优化 */
+        /* 顶部按钮组 */
         .header-container {
             padding: 10px !important;
             gap: 8px !important;
             justify-content: flex-start;
+            background: #fff;
         }
         
         .header-container button {
             font-size: 12px;
-            padding: 5px 10px;
-            height: 30px;
+            padding: 0 12px;
+            height: 32px;
+            line-height: 30px;
         }
 
         /* 范围输入框微调 */
         .range-group {
             display: flex;
             align-items: center;
-            background: #fff;
-            padding: 4px;
+            background: #f5f5f5;
+            padding: 3px 6px;
             border-radius: 4px;
             margin-top: 4px;
         }
         .range-group input {
-            width: 40px !important;
+            width: 35px !important;
             text-align: center;
+            background: transparent;
             border: none;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #ccc;
         }
         
-        /* 隐藏原生的大块背景内的无用元素 */
+        /* 隐藏原生无用的大块背景 */
         .background-color-block1 {
             background: transparent;
             padding: 0;
@@ -101,11 +106,15 @@
         h5.section-title {
             margin: 0 0 8px 0;
             font-size: 14px;
-            color: #333;
+            color: #24c68a; /* Keep Green */
             font-weight: bold;
-            border-left: 3px solid var(--primary-color);
+            border-left: 3px solid #24c68a;
             padding-left: 6px;
         }
+        
+        /* 按钮样式微调 */
+        .init-btn { border: 1px solid #ddd; background: #fff; color: #666; }
+        .large-btn { background: #24c68a; color: #fff; border: none; }
     </style>
 </head>
 
@@ -113,7 +122,7 @@
 
     <div id="main-div">
         <!-- =========================================
-             左侧：预览图区域 (核心区域，严禁修改结构与类名)
+             左侧：预览图区域 (未修改，保证兼容性)
              ========================================= -->
         <div id="new-Img" class="new-img">
             <div class="bgimgwrap" id="bgimgwrap">
@@ -139,12 +148,12 @@
         </div>
 
         <!-- =========================================
-             右侧：控制面板 (重构版)
+             右侧：控制面板 (优化版)
              ========================================= -->
         <div class="set-data">
             <div id="messageBox"></div>
             
-            <!-- 顶部操作栏 -->
+            <!-- 顶部按钮组 -->
             <div class="header-container">
                 <button onclick="Download(Download1)" class="one_click">⬇️ 保存截图</button>
                 <button onclick="drawMine('https://tool.joytion.cn/generate-track')" class="flush-btn">🎲 随机路径</button>
@@ -154,45 +163,43 @@
 
             <ul class="setDataList">
                 
-                <!-- 1. 个人信息 (紧凑网格) -->
+                <!-- 1. 个人信息 -->
                 <div class="background-green">
                     <h5 class="section-title">个人信息</h5>
                     <div class="compact-grid-2">
-                        <!-- 左列：名字与标题 -->
                         <div>
                             <div class="compact-row">
                                 <label>昵称:</label>
-                                <input id="inpt_username" onchange="setData()" type="text" style="width: 90px;" placeholder="用户昵称">
+                                <input id="inpt_username" onchange="setData()" type="text" style="width: 85px;" placeholder="用户昵称">
                             </div>
                             <div class="compact-row">
                                 <label>标题:</label>
-                                <input id="inpt_keep_title" onchange="setData()" type="text" style="width: 90px;" placeholder="如: 户外跑步">
+                                <input id="inpt_keep_title" onchange="setData()" type="text" style="width: 85px;" placeholder="如: 户外跑步">
                             </div>
                         </div>
-                        <!-- 右列：头像 -->
-                        <div style="border-left:1px solid #eee; padding-left:10px;">
-                            <label>头像设置:</label>
-                            <div class="compact-row" style="margin-top: 5px;">
-                                <button onclick="inpt_portrait_onClick()" class="inpt-btn">上传</button>
-                                <button onclick="init_portrait()" class="init-btn">默认</button>
+                        <div style="border-left:1px solid #eee; padding-left:8px;">
+                            <label>头像:</label>
+                            <div class="compact-row" style="margin-top: 2px;">
+                                <button onclick="inpt_portrait_onClick()" class="inpt-btn" style="flex:1;">上传</button>
+                                <button onclick="init_portrait()" class="init-btn" style="flex:1;">默认</button>
                                 <input style="display:none;" type="file" accept="image/*" id="inpt_portrait" onchange="portrait_inpt()" />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2. 运动数据 (双列布局) -->
+                <!-- 2. 运动数据 -->
                 <div class="background-blue">
-                    <h5 class="section-title">运动数据</h5>
+                    <h5 class="section-title" style="color:#5d52ff; border-color:#5d52ff;">运动数据</h5>
                     <div class="compact-grid-2">
                         <!-- 里程 -->
                         <div>
                             <div class="compact-row">
                                 <label>里程(km):</label>
-                                <input id="inpt_miles" onchange="setData()" class="mile2-inp" style="width: 60px; font-weight:bold;">
+                                <input id="inpt_miles" onchange="setData()" class="mile2-inp" style="width: 55px; font-weight:bold;">
                             </div>
                             <div class="range-group">
-                                <span style="font-size:10px; color:#999">随机范围:</span>
+                                <span style="font-size:10px; color:#999">范围:</span>
                                 <input type="text" id="min_miles" onchange="set_km_and_speed()">
                                 <span style="margin:0 2px">-</span>
                                 <input type="text" id="max_miles" onchange="set_km_and_speed()">
@@ -202,10 +209,10 @@
                         <div>
                             <div class="compact-row">
                                 <label>配速:</label>
-                                <input id="inpt_speeds" onchange="setData()" type="text" style="width: 60px;">
+                                <input id="inpt_speeds" onchange="setData()" type="text" style="width: 55px;">
                             </div>
                             <div class="range-group">
-                                <span style="font-size:10px; color:#999">随机范围:</span>
+                                <span style="font-size:10px; color:#999">范围:</span>
                                 <input type="text" id="min_speeds" onchange="set_km_and_speed()">
                                 <span style="margin:0 2px">-</span>
                                 <input type="text" id="max_speeds" onchange="set_km_and_speed()">
@@ -216,27 +223,27 @@
 
                 <!-- 3. 时间与环境 -->
                 <div class="background-color-block2">
-                    <h5 class="section-title">时间与环境</h5>
+                    <h5 class="section-title" style="color:#ff9f43; border-color:#ff9f43;">时间与环境</h5>
                     <div class="compact-row">
                         <label>日期:</label>
-                        <input id="inpt_year" onchange="setData()" type="text" class="time-inp" style="width:40px">年
-                        <input id="inpt_month" onchange="setData()" type="text" class="time-inp" style="width:25px">月
-                        <input id="inpt_day" onchange="setData()" type="text" class="time-inp" style="width:25px">日
-                        &nbsp;|&nbsp;
-                        <input id="inpt_hour" onchange="setData()" type="text" class="time-inp" style="width:25px">:
-                        <input id="inpt_min" onchange="setData()" type="text" class="time-inp" style="width:25px">
+                        <input id="inpt_year" onchange="setData()" type="text" class="time-inp" style="width:38px">年
+                        <input id="inpt_month" onchange="setData()" type="text" class="time-inp" style="width:22px">月
+                        <input id="inpt_day" onchange="setData()" type="text" class="time-inp" style="width:22px">日
+                        &nbsp;&nbsp;
+                        <input id="inpt_hour" onchange="setData()" type="text" class="time-inp" style="width:22px">:
+                        <input id="inpt_min" onchange="setData()" type="text" class="time-inp" style="width:22px">
                     </div>
                     <div class="compact-row">
                         <label>天气:</label>
-                        <select onchange="weather_Select_onChange()" id="weather_Select" style="width:70px;">
+                        <select onchange="weather_Select_onChange()" id="weather_Select" style="width:65px;">
                             <option value="images/weather1.png">☀ 晴</option>
                             <option value="images/weather2.png">⛅ 多云</option>
                             <option value="images/weather3.png">☁ 阴</option>
                         </select>
-                        <label style="margin-left:10px;">温/湿:</label>
-                        <input id="inpt_temperature" onchange="setData()" type="text" style="width:30px;">°C
-                        <input id="inpt_humidity" onchange="setData()" type="text" style="width:30px;">%
-                        <span style="font-size:10px; color:#aaa; margin-left:5px;">(支持自动获取)</span>
+                        <label style="margin-left:8px;">温/湿:</label>
+                        <input id="inpt_temperature" onchange="setData()" type="text" style="width:28px;">°C
+                        <input id="inpt_humidity" onchange="setData()" type="text" style="width:28px;">%
+                        <span style="font-size:10px; color:#aaa;">(自动)</span>
                     </div>
                 </div>
 
@@ -244,9 +251,8 @@
                 <div class="background-green">
                     <h5 class="section-title">地图与轨迹</h5>
                     
-                    <!-- 背景选择 -->
                     <div class="compact-row">
-                        <label>地图:</label>
+                        <label>背景:</label>
                         <select onchange="default_bgImgSelect_onChange()" id="default_bgImgSelect" style="flex:1;">
                             <option value="guiji_Select_1">哈工程-南体育场</option>
                             <option value="guiji_Select_2">军工操场</option>
@@ -256,7 +262,6 @@
                         <input style="display:none;" type="file" accept="image/*" id="inpt_bgimg" onchange="bgimg_inpt()" />
                     </div>
 
-                    <!-- 轨迹选择 -->
                     <div class="compact-row">
                         <label>路径:</label>
                         <select onchange="guijiSelect_onChange()" id="guiji_Select_1" class="guijiSelect" style="flex:1;">
@@ -267,7 +272,7 @@
                             <option value="['images/bg1_5.png', 'images/bg1_empty2.png']">预设 5</option>
                             <option value="['images/bg1_empty2.png', 'images/bg1_empty2.png']">无预设</option>
                         </select>
-                        <!-- 隐藏的selects保持逻辑兼容 -->
+                        <!-- 兼容性隐藏Select -->
                         <select onchange="guijiSelect_onChange()" id="guiji_Select_2" class="guijiSelect" style="display:none">
                             <option value="['images/bg2_empty.png', 'images/bg2_empty.png']">空</option>
                         </select>
@@ -275,39 +280,38 @@
                             <option value="['images/bg3_empty.png', 'images/bg3_empty.png']">空</option>
                         </select>
                         
-                        <button onclick="inpt_drawbtn_onClick()" class="init-btn" style="color:var(--accent-color); border-color:var(--accent-color)">✍ 手绘</button>
+                        <button onclick="inpt_drawbtn_onClick()" class="init-btn" style="color:#5d52ff;">✍ 手绘</button>
                     </div>
 
-                    <!-- 轨迹微调 -->
                     <div class="compact-row" style="font-size:12px; margin-top:8px; background:#f9f9f9; padding:5px; border-radius:4px;">
                         <input type="checkbox" id="auto_draw_checkbox" onchange="auto_draw_checkbox_onchange()" checked />
                         <span>自动生成</span>
                         
-                        <input type="checkbox" id="inpt_colorchange_checkbox" onchange="inpt_colorchange_checkbox_onchange()" style="margin-left:10px;" checked />
-                        <span>配速变色</span>
+                        <input type="checkbox" id="inpt_colorchange_checkbox" onchange="inpt_colorchange_checkbox_onchange()" style="margin-left:8px;" checked />
+                        <span>变色</span>
                         
-                        <label style="margin-left:10px;">变色率:</label>
-                        <input id="inpt_bs_prob" onchange="setData()" type="text" style="width:30px;" placeholder="0.5">
+                        <label style="margin-left:8px;">概率:</label>
+                        <input id="inpt_bs_prob" onchange="setData()" type="text" style="width:25px;" placeholder="0.5">
                         
-                        <label style="margin-left:5px;">幅度:</label>
-                        <input id="inpt_bs_range_min" onchange="setData()" type="text" style="width:25px;">
+                        <label style="margin-left:4px;">幅度:</label>
+                        <input id="inpt_bs_range_min" onchange="setData()" type="text" style="width:22px;">
                         -
-                        <input id="inpt_bs_range_max" onchange="setData()" type="text" style="width:25px;">
+                        <input id="inpt_bs_range_max" onchange="setData()" type="text" style="width:22px;">
                     </div>
                 </div>
 
                 <div class="background-green" style="display:flex; justify-content:space-between; align-items:center;">
-                    <label>生成宽度 (px):</label>
-                    <input id="inpt_savePic_width" onchange="setData()" type="text" placeholder="留空默认" style="width:100px;">
+                    <label>图片生成宽度 (px):</label>
+                    <input id="inpt_savePic_width" onchange="setData()" type="text" placeholder="默认" style="width:80px;">
                 </div>
                 
-                <!-- 底部按钮 -->
+                <!-- 底部操作 -->
                 <li style="margin-top: 15px;">
                     <button onclick="Download(Download1)" class="large-btn" style="width: 100%; height:40px; font-size:16px;">🚀 立即生成图片</button>
                 </li>
                 <li style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button onclick="Download(Download3)" class="init-btn" style="flex: 1;">备用下载方案 A</button>
-                    <button onclick="Download(Download4)" class="init-btn" style="flex: 1;">备用下载方案 B</button>
+                    <button onclick="Download(Download3)" class="init-btn" style="flex: 1; font-size:11px;">备用方案 A</button>
+                    <button onclick="Download(Download4)" class="init-btn" style="flex: 1; font-size:11px;">备用方案 B</button>
                 </li>
             </ul>
 
@@ -334,28 +338,27 @@
             </div>
         </div>
         
-        <!-- 底部说明 -->
         <div class="warning-wrap" style="padding: 10px 15px !important;">
             <div class="warning">
                 <b style="font-size:12px;">⚠️ 免责声明</b>
-                <span style="font-size:12px;">仅供编程交流与界面设计学习，严禁用于造假打卡等违规用途。</span>
+                <span style="font-size:12px;">仅供学习交流，请勿用于违规用途。</span>
             </div>
         </div>
     </div>
 
-    <!-- 脚本加载 -->
-    <script src="js/invoke/html2canvas.min.js" defer></script>
-    <script src="js/invoke/amapHelper.js" defer></script>
-    <script src="js/indexedDB.js" defer></script>
-    <script src="js/init.js" defer></script>
-    <script src="js/render.js" defer></script>
-    <script src="js/select_manner.js" defer></script>
-    <script src="js/dataURLtoBlob.js" defer></script>
-    <script src="js/img_both_inpt_set.js" defer></script>
-    <script src="js/draw_personalization.js" defer></script>
-    <script src="js/download_img.js" defer></script>
-    <script src="js/drawMine.js" defer></script>
-    <script src="js/onload.js" defer></script>
+    <!-- 脚本加载 (已恢复为同步加载，修复数字不显示的问题) -->
+    <script src="js/invoke/html2canvas.min.js"></script>
+    <script src="js/invoke/amapHelper.js"></script>
+    <script src="js/indexedDB.js"></script>
+    <script src="js/init.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/select_manner.js"></script>
+    <script src="js/dataURLtoBlob.js"></script>
+    <script src="js/img_both_inpt_set.js"></script>
+    <script src="js/draw_personalization.js"></script>
+    <script src="js/download_img.js"></script>
+    <script src="js/drawMine.js"></script>
+    <script src="js/onload.js"></script>
 </body>
 
 </html>
