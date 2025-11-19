@@ -13,128 +13,36 @@
 
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 优化视口设置，禁止用户缩放，体验更像原生App -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>KEEPro - 运动截图生成</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <title>KEEPro - 运动截图生成器</title>
     <link rel="icon" href="./favicon.ico">
+    <link rel="shortcut icon" href="./favicon.ico">
     <link rel="stylesheet" href="./css/styles.css">
 
-    <!-- 🎨 嵌入式紧凑样式：让控制面板更小巧 -->
-    <style>
-        /* 缩小功能块的内边距和间距 */
-        .set-data .background-green, 
-        .set-data .background-blue, 
-        .set-data .background-color-block2 {
-            padding: 8px 10px !important; 
-            margin-bottom: 8px !important;
-            border-radius: 6px;
-            font-size: 13px;
-        }
-        
-        /* 通用紧凑行 Flex */
-        .compact-row {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            flex-wrap: nowrap;
-            margin-bottom: 4px;
-        }
-        
-        /* 双列网格布局：让左右两边排布 */
-        .grid-2-col {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        /* 标签优化 */
-        .set-data label {
-            font-size: 12px;
-            color: #666;
-            margin-right: 2px;
-            font-weight: bold;
-            white-space: nowrap; /* 防止标签换行 */
-        }
-        
-        /* 输入框优化 */
-        .set-data input[type="text"], 
-        .set-data select {
-            height: 24px;
-            padding: 0 4px;
-            font-size: 12px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-        }
-
-        /* 顶部按钮组 */
-        .header-container {
-            padding: 8px !important;
-            gap: 5px !important;
-            justify-content: space-between; /* 两端对齐 */
-            background: #fff;
-        }
-        .header-container button {
-            font-size: 12px;
-            padding: 0 8px;
-            height: 28px;
-            line-height: 26px;
-            flex: 1; /* 按钮平分宽度 */
-        }
-
-        /* 浮动范围输入框组 */
-        .range-box {
-            display: flex;
-            align-items: center;
-            background: #f0f2f5;
-            padding: 2px 4px;
-            border-radius: 3px;
-            margin-top: 2px;
-        }
-        .range-box span { font-size: 10px; color: #999; margin-right: 3px; }
-        .range-box input {
-            width: 30px !important;
-            text-align: center;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid #ccc;
-            height: 18px !important;
-        }
-
-        /* 隐藏原生无用的大块背景 */
-        .background-color-block1 { background: transparent; padding: 0; margin: 0; }
-
-        /* 模块标题微调 */
-        h5.mini-title {
-            margin: 0 0 5px 0;
-            font-size: 13px;
-            color: var(--primary-color);
-            font-weight: bold;
-            border-left: 3px solid var(--primary-color);
-            padding-left: 5px;
-            line-height: 1;
-        }
-        
-        /* 按钮样式微调 */
-        .init-btn { font-size: 11px; padding: 0 5px; height: 24px; }
-        .large-btn { background: var(--primary-color); color: #fff; border: none; font-weight: bold;}
-    </style>
+    <!-- 🚀 性能优化：预加载核心数字字体，防止加载时数字跳变 -->
+    <link rel="preload" href="./DINCond-Bold.otf" as="font" type="font/otf" crossorigin>
 </head>
 
 <body id="body">
 
     <div id="main-div">
         <!-- =========================================
-             左侧：预览图区域 (保持原样)
+             左侧：预览图区域 (核心区域，严禁修改结构以保证还原度)
              ========================================= -->
         <div id="new-Img" class="new-img">
             <div class="bgimgwrap" id="bgimgwrap">
-                <img src="" class="innerbgimg" id="bg-img" />
+                <img src="" class="innerbgimg" id="bg-img" alt="背景图" />
             </div>
-            <img src="" id="gui-img" />
+            <img src="" id="gui-img" alt="UI遮罩" />
             <div class="portrait-wrap" id="portrait-wrap">
-                <img class="portrait" id="portrait" src="" />
+                <img class="portrait" id="portrait" src="" alt="头像" />
             </div>
             <div class="weather-imgwrap">
-                <img src="" class="weather" id="weather" />
+                <img src="" class="weather" id="weather" alt="天气图标" />
             </div>
             <span class="username" id="username">UserName</span>
             <span class="keep-title" id="keep-title">户外跑步</span>
@@ -149,224 +57,225 @@
         </div>
 
         <!-- =========================================
-             右侧：控制面板 (紧凑重构版)
+             右侧：控制面板区域 (已优化交互文案)
              ========================================= -->
         <div class="set-data">
             <div id="messageBox"></div>
             
-            <!-- 顶部操作栏 -->
+            <!-- 顶部快捷操作栏 -->
             <div class="header-container">
-                <button onclick="Download(Download1)" class="one_click">⬇️ 保存</button>
-                <!-- 注意：这里修改为本地路径，需要运行 Json2Png.py -->
-                <button onclick="drawMine('/generate-track')" class="flush-btn">🎲 随机路径</button>
-                <button onclick="storeToIndexedDB(tmp_portrait_src,tmp_bgimg_osrc)" class="storeToIndexedDB-btn">💾 存配置</button>
-                <button onclick="clearIndexedDB()" class="clear-btn">🗑️ 重置</button>
+                <button onclick="Download(Download1)" class="one_click">⬇️ 保存图片</button>
+                <button onclick="Download(Download2)" class="one_click">👁️ 预览效果</button>
+                <button onclick="drawMine('https://tool.joytion.cn/generate-track')" class="flush-btn">🔄 随机路径</button>
+                <button onclick="storeToIndexedDB(tmp_portrait_src,tmp_bgimg_osrc)" class="storeToIndexedDB-btn" title="保存用户名、头像等常用信息到浏览器">💾 保存设置</button>
+                <button onclick="clearIndexedDB()" class="clear-btn">🗑️ 重置所有</button>
             </div>
 
             <ul class="setDataList">
+                <!-- 1. 用户信息设置 -->
+                <div class="background-green">
+                    <li>
+                        <label>用户名：</label>
+                        <input id="inpt_username" onchange="setData()" type="text" class="username-inp" placeholder="输入昵称">
+                    </li>
+                    <li>
+                        <label>头像：</label>
+                        <button onclick="inpt_portrait_onClick()" class="inpt-btn">上传图片</button>
+                        <input style="display:none;" type="file" accept="image/*" id="inpt_portrait" onchange="portrait_inpt()" />
+                        <button onclick="init_portrait()" class="init-btn">恢复默认</button>
+                    </li>
+                    <li>
+                        <label>运动标题：</label>
+                        <span>keep • </span>
+                        <input id="inpt_keep_title" onchange="setData()" type="text" class="keep-title-inp" placeholder="例如: 户外跑步">
+                    </li>
+                </div>
                 
-                <!-- 1. 个人信息 (双列) -->
-                <div class="background-green">
-                    <h5 class="mini-title">个人信息</h5>
-                    <div class="grid-2-col">
-                        <div>
-                            <div class="compact-row">
-                                <label>昵称:</label>
-                                <input id="inpt_username" onchange="setData()" type="text" style="width: 100%;" placeholder="用户昵称">
-                            </div>
-                            <div class="compact-row">
-                                <label>标题:</label>
-                                <input id="inpt_keep_title" onchange="setData()" type="text" style="width: 100%;" placeholder="如: 户外跑步">
-                            </div>
-                        </div>
-                        <div style="border-left:1px solid #eee; padding-left:5px; display:flex; flex-direction:column; justify-content:center;">
-                            <label>头像:</label>
-                            <div class="compact-row">
-                                <button onclick="inpt_portrait_onClick()" class="init-btn" style="flex:1">上传</button>
-                                <button onclick="init_portrait()" class="init-btn" style="flex:1">默认</button>
-                                <input style="display:none;" type="file" accept="image/*" id="inpt_portrait" onchange="portrait_inpt()" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. 运动数据 (双列) -->
+                <!-- 2. 运动数据设置 -->
                 <div class="background-blue">
-                    <h5 class="mini-title" style="color:#5d52ff; border-color:#5d52ff;">运动数据</h5>
-                    <div class="grid-2-col">
-                        <!-- 左侧：里程 -->
-                        <div>
-                            <div class="compact-row">
-                                <label>里程(km):</label>
-                                <input id="inpt_miles" onchange="setData()" class="mile2-inp" style="width: 50px; font-weight:bold;">
-                            </div>
-                            <div class="range-box">
-                                <span>浮动:</span>
-                                <input type="text" id="min_miles" onchange="set_km_and_speed()">
-                                <span style="margin:0 2px">-</span>
-                                <input type="text" id="max_miles" onchange="set_km_and_speed()">
-                            </div>
+                    <li>
+                        <label>主里程(km)：</label>
+                        <input id="inpt_miles" onchange="setData()" class="mile2-inp" placeholder="显示值">
+                        <div class="background-color-block1">
+                            <small>随机范围 (用于生成截图时微调)：</small><br>
+                            最小: <input type="text" id="min_miles" onchange="set_km_and_speed()" class="mile2-inp range-input">
+                            ~ 最大: <input type="text" id="max_miles" onchange="set_km_and_speed()" class="mile2-inp range-input">
                         </div>
-                        <!-- 右侧：配速 -->
-                        <div>
-                            <div class="compact-row">
-                                <label>配速:</label>
-                                <input id="inpt_speeds" onchange="setData()" type="text" style="width: 50px;">
-                            </div>
-                            <div class="range-box">
-                                <span>浮动:</span>
-                                <input type="text" id="min_speeds" onchange="set_km_and_speed()">
-                                <span style="margin:0 2px">-</span>
-                                <input type="text" id="max_speeds" onchange="set_km_and_speed()">
-                            </div>
+                    </li>
+                    <li>
+                        <label>配速：</label>
+                        <input id="inpt_speeds" onchange="setData()" type="text" class="mile2-inp" placeholder="例如 5'30&quot;">
+                        <div class="background-color-block1">
+                            <small>随机范围 (用于生成截图时微调)：</small><br>
+                            最快: <input type="text" id="min_speeds" onchange="set_km_and_speed()" class="mile2-inp range-input">
+                            ~ 最慢: <input type="text" id="max_speeds" onchange="set_km_and_speed()" class="mile2-inp range-input">
                         </div>
-                    </div>
+                    </li>
                 </div>
 
-                <!-- 3. 时间与环境 (整合) -->
+                <!-- 3. 时间与环境 -->
                 <div class="background-color-block2">
-                    <h5 class="mini-title" style="color:#ff9f43; border-color:#ff9f43;">环境参数</h5>
-                    <!-- 第一行：日期时间 -->
-                    <div class="compact-row">
-                        <label>时间:</label>
-                        <input id="inpt_year" onchange="setData()" type="text" class="time-inp" style="width:36px">/
-                        <input id="inpt_month" onchange="setData()" type="text" class="time-inp" style="width:20px">/
-                        <input id="inpt_day" onchange="setData()" type="text" class="time-inp" style="width:20px">
-                        <span style="width:10px"> </span>
-                        <input id="inpt_hour" onchange="setData()" type="text" class="time-inp" style="width:20px">:
-                        <input id="inpt_min" onchange="setData()" type="text" class="time-inp" style="width:20px">
-                    </div>
-                    <!-- 第二行：天气温湿度 -->
-                    <div class="compact-row">
-                        <label>天气:</label>
-                        <select onchange="weather_Select_onChange()" id="weather_Select" style="width:60px;">
-                            <option value="images/weather1.png">☀ 晴</option>
-                            <option value="images/weather2.png">⛅ 多云</option>
-                            <option value="images/weather3.png">☁ 阴</option>
-                        </select>
-                        <label style="margin-left:10px;">温/湿:</label>
-                        <input id="inpt_temperature" onchange="setData()" type="text" style="width:25px;">°C
-                        <input id="inpt_humidity" onchange="setData()" type="text" style="width:25px;">%
-                        <span style="font-size:10px; color:#999">(自动)</span>
+                    <li>
+                        <label>运动时间：</label>
+                        <input id="inpt_year" onchange="setData()" type="text" class="time-inp year-inp"><span>年</span>
+                        <input id="inpt_month" onchange="setData()" type="text" class="time-inp"><span>月</span>
+                        <input id="inpt_day" onchange="setData()" type="text" class="time-inp"><span>日</span>
+                        &nbsp;&nbsp;
+                        <input id="inpt_hour" onchange="setData()" type="text" class="time-inp"><span>:</span>
+                        <input id="inpt_min" onchange="setData()" type="text" class="time-inp">
+                    </li>
+                </div>
+                <div class="weather-container">
+                    <div class="background-color-block2">
+                        <li>
+                            <label>天气环境：</label>
+                            <select onchange="weather_Select_onChange()" id="weather_Select">
+                                <option value="images/weather1.png">☀ 晴</option>
+                                <option value="images/weather2.png">⛅ 多云</option>
+                                <option value="images/weather3.png">☁ 阴天</option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>气温/湿度：</label>
+                            <input id="inpt_temperature" onchange="setData()" type="text" style="width:50px;" placeholder="°C"> °C
+                            &nbsp;&nbsp;
+                            <input id="inpt_humidity" onchange="setData()" type="text" style="width:50px;" placeholder="%"> %
+                            <span class="ApiExplanation" style="display:inline-block; margin-left:10px;">(默认自动获取实时数据)</span>
+                        </li>
                     </div>
                 </div>
 
-                <!-- 4. 地图与轨迹 -->
+                <!-- 4. 地图与轨迹设置 -->
                 <div class="background-green">
-                    <h5 class="mini-title">地图与轨迹</h5>
-                    
-                    <div class="compact-row">
-                        <label>地图:</label>
-                        <select onchange="default_bgImgSelect_onChange()" id="default_bgImgSelect" style="flex:1;">
-                            <option value="guiji_Select_1">哈工程-南体育场</option>
+                    <li>
+                        <label>地图背景：</label>
+                        <select onchange="default_bgImgSelect_onChange()" id="default_bgImgSelect">
+                            <option value="guiji_Select_1">哈尔滨工程大学-南体育场</option>
                             <option value="guiji_Select_2">军工操场</option>
                             <option value="guiji_Select_3">北体育场</option>
                         </select>
-                        <button onclick="inpt_bgimg_onClick()" class="init-btn">自定义图</button>
+                    </li>
+                    <li>
+                        <label>自定义地图：</label>
+                        <button onclick="inpt_bgimg_onClick()">上传图片</button>
                         <input style="display:none;" type="file" accept="image/*" id="inpt_bgimg" onchange="bgimg_inpt()" />
-                    </div>
+                        <button onclick="init_bgimg()" class="init-btn">重置</button>
+                    </li>
 
-                    <div class="compact-row">
-                        <label>路径:</label>
-                        <select onchange="guijiSelect_onChange()" id="guiji_Select_1" class="guijiSelect" style="flex:1;">
-                            <option value="['images/bg1_1.png', 'images/bg1_empty2.png']">预设 1</option>
-                            <option value="['images/bg1_2.png', 'images/bg1_empty2.png']">预设 2</option>
-                            <option value="['images/bg1_3.png', 'images/bg1_empty2.png']">预设 3</option>
-                            <option value="['images/bg1_4.png', 'images/bg1_empty2.png']">预设 4</option>
-                            <option value="['images/bg1_5.png', 'images/bg1_empty2.png']">预设 5</option>
+                    <li>
+                        <label>轨迹样式：</label>
+                        <!-- 预设轨迹选择组 -->
+                        <select onchange="guijiSelect_onChange()" id="guiji_Select_1" class="guijiSelect">
+                            <option value="['images/bg1_1.png', 'images/bg1_empty2.png']">预设路径 1</option>
+                            <option value="['images/bg1_2.png', 'images/bg1_empty2.png']">预设路径 2</option>
+                            <option value="['images/bg1_3.png', 'images/bg1_empty2.png']">预设路径 3</option>
+                            <option value="['images/bg1_4.png', 'images/bg1_empty2.png']">预设路径 4</option>
+                            <option value="['images/bg1_5.png', 'images/bg1_empty2.png']">预设路径 5</option>
                             <option value="['images/bg1_empty2.png', 'images/bg1_empty2.png']">无预设</option>
                         </select>
-                        <!-- 保持原有逻辑的隐藏Select -->
-                        <select onchange="guijiSelect_onChange()" id="guiji_Select_2" class="guijiSelect" style="display:none">
-                            <option value="['images/bg2_empty.png', 'images/bg2_empty.png']">空</option>
+                        <select onchange="guijiSelect_onChange()" id="guiji_Select_2" class="guijiSelect">
+                            <option value="['images/bg2_empty.png', 'images/bg2_empty.png']">无预设</option>
                         </select>
-                        <select onchange="guijiSelect_onChange()" id="guiji_Select_3" class="guijiSelect" style="display:none">
-                            <option value="['images/bg3_empty.png', 'images/bg3_empty.png']">空</option>
+                        <select onchange="guijiSelect_onChange()" id="guiji_Select_3" class="guijiSelect">
+                            <option value="['images/bg3_empty.png', 'images/bg3_empty.png']">无预设</option>
                         </select>
                         
-                        <button onclick="inpt_drawbtn_onClick()" class="init-btn" style="color:#5d52ff; border:1px solid #5d52ff;">✍ 手绘</button>
-                    </div>
-
-                    <div class="compact-row" style="background:#f9f9f9; padding:4px; border-radius:3px; justify-content: space-between;">
-                        <div style="display:flex; align-items:center;">
-                            <input type="checkbox" id="auto_draw_checkbox" onchange="auto_draw_checkbox_onchange()" checked />
-                            <label style="font-weight:normal;">自动生成</label>
-                        </div>
-                        <div style="display:flex; align-items:center;">
-                            <input type="checkbox" id="inpt_colorchange_checkbox" onchange="inpt_colorchange_checkbox_onchange()" checked />
-                            <label style="font-weight:normal;">配速变色</label>
-                        </div>
-                    </div>
+                        <button onclick="inpt_drawbtn_onClick()" style="margin-left: 10px;">✍️ 手绘轨迹</button>
+                    </li>
                     
-                    <div class="compact-row" style="margin-top:4px;">
-                        <label>变色概率:</label>
-                        <input id="inpt_bs_prob" onchange="setData()" type="text" style="width:25px;" placeholder="0.5">
-                        <label style="margin-left:5px;">幅度:</label>
-                        <input id="inpt_bs_range_min" onchange="setData()" type="text" style="width:22px;">
-                        -
-                        <input id="inpt_bs_range_max" onchange="setData()" type="text" style="width:22px;">
-                    </div>
-                </div>
-
-                <div class="background-green" style="display:flex; justify-content:space-between; align-items:center;">
-                    <label>生成图宽度 (px):</label>
-                    <input id="inpt_savePic_width" onchange="setData()" type="text" placeholder="默认" style="width:60px;">
+                    <!-- 轨迹选项 -->
+                    <li>
+                        <label>加载选项：</label>
+                        <input type="checkbox" id="auto_draw_checkbox" onchange="auto_draw_checkbox_onchange()" checked />
+                        <span>页面加载时自动生成路径</span>
+                    </li>
+                    <li>
+                        <label>轨迹特效：</label>
+                        <input type="checkbox" id="inpt_colorchange_checkbox" onchange="inpt_colorchange_checkbox_onchange()" checked />
+                        <span>启用渐变色 (模拟配速变化)</span>
+                    </li>
+                    <li id="bs_prop_inpt_wrap">
+                        <label>变色概率：</label>
+                        <input id="inpt_bs_prob" onchange="setData()" type="text" placeholder="0-1之间">
+                    </li>
+                    <li id="inpt_bs_range_wrap">
+                        <label>变色步长：</label>
+                        <input id="inpt_bs_range_min" onchange="setData()" type="text" style="width: 50px;">
+                        <span>~</span>
+                        <input id="inpt_bs_range_max" onchange="setData()" type="text" style="width: 50px;">
+                    </li>
                 </div>
                 
-                <!-- 底部操作 -->
-                <li style="margin-top: 10px;">
-                    <button onclick="Download(Download1)" class="large-btn" style="width: 100%; height:36px; font-size:15px;">🚀 立即生成图片</button>
+                <div class="background-green">
+                    <li>
+                        <label>生成宽度：</label>
+                        <input id="inpt_savePic_width" onchange="setData()" type="text" placeholder="默认宽度"> px
+                    </li>
+                </div>
+                
+                <!-- 底部大按钮 -->
+                <li style="margin-top: 20px;">
+                    <button onclick="Download(Download1)" class="large-btn" style="width: 100%;">💾 生成并保存图片</button>
                 </li>
-                <li style="display: flex; gap: 10px; margin-top: 8px;">
-                    <button onclick="Download(Download3)" class="init-btn" style="flex: 1;">备用方案 A</button>
-                    <button onclick="Download(Download4)" class="init-btn" style="flex: 1;">备用方案 B</button>
+                <li style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="Download(Download3)" style="flex: 1;">备用下载方案 1</button>
+                    <button onclick="Download(Download4)" style="flex: 1;">备用下载方案 2</button>
                 </li>
             </ul>
 
             <!-- 手动绘制弹窗 -->
             <div id="drawpic_overlay">
                 <div class="drawpic_popup">
-                    <div style="margin-bottom:8px;">
+                    <div>
                         <h3>绘制轨迹</h3>
-                        <span style="font-size:12px; color:#999">在下方画布拖动绘制</span>
+                        <p style="font-size: 12px; color: #666;">在下方画布拖动鼠标或手指绘制路径</p>
                     </div>
                     <div id="drawpic_canvas_wrap2">
                         <div id="drawpic_canvas_wrap">
                             <canvas id="drawpic_canvas" width="1" height="1"></canvas>
                         </div>
                     </div>
-                    <div style="margin-top: 12px; display:flex; gap:8px; justify-content:center;">
-                        <button onclick="Json2Draw('/generate-track')" class="flush-btn">🎲 随机</button>
-                        <button onclick="drawpic_initbtn_onClick()" class="init-btn">清空</button>
-                        <button onclick="drawpic_hidebtn_onClick()" class="init-btn">取消</button>
-                        <button onclick="drawpic_yesbtn_onClick()" class="large-btn">确定</button>
+                    <div style="margin-top: 15px;">
+                        <button onclick="Json2Draw('https://tool.joytion.cn/generate-track')" class="flush-btn">🎲 随机生成</button>
+                        <button onclick="drawpic_initbtn_onClick()" class="init-btn">清空画布</button>
+                        <div style="height: 10px;"></div>
+                        <button onclick="drawpic_hidebtn_onClick()">取消</button>
+                        <button onclick="drawpic_yesbtn_onClick()" class="large-btn">确认使用</button>
                     </div>
                     <canvas id="buffer_canvas" style="display: none;"></canvas>
                 </div>
             </div>
         </div>
-        
-        <div class="warning-wrap" style="padding: 8px !important;">
+
+        <!-- 底部免责说明 -->
+        <div class="warning-wrap">
             <div class="warning">
-                <b style="font-size:12px;">⚠️ 免责声明</b>
-                <span style="font-size:12px; line-height:1.2; display:inline-block;">仅供学习交流，严禁用于造假打卡等违规用途。</span>
+                <b>⚠️ 免责声明</b>
+                <span>本工具仅供编程学习与界面设计交流，请勿用于任何虚假打卡或商业用途。</span>
+            </div>
+            <div class="explanation" style="margin-top: 10px; font-size: 13px;">
+                <p>🛠 <b>功能说明：</b></p>
+                <p>1. 修改上方输入框内容，预览图实时更新。</p>
+                <p>2. 点击“保存设置”可将头像和昵称缓存在本地，下次无需重复输入。</p>
+                <p>3. 支持自动获取当前城市的实时气温和湿度。</p>
+                <p>🔗 项目开源地址：<a href="https://gitee.com/joytion/keep/" target="_blank">Gitee - KEEPro</a></p>
             </div>
         </div>
     </div>
 
-    <!-- 脚本加载 (移除了defer以解决加载问题) -->
-    <script src="js/invoke/html2canvas.min.js"></script>
-    <script src="js/invoke/amapHelper.js"></script>
-    <script src="js/indexedDB.js"></script>
-    <script src="js/init.js"></script>
-    <script src="js/render.js"></script>
-    <script src="js/select_manner.js"></script>
-    <script src="js/dataURLtoBlob.js"></script>
-    <script src="js/img_both_inpt_set.js"></script>
-    <script src="js/draw_personalization.js"></script>
-    <script src="js/download_img.js"></script>
-    <script src="js/drawMine.js"></script>
-    <script src="js/onload.js"></script>
+    <!-- 🚀 脚本优化：全部使用 defer 异步加载，不阻塞页面渲染 -->
+    <script src="js/invoke/html2canvas.min.js" defer></script>
+    <script src="js/invoke/amapHelper.js" defer></script>
+    <script src="js/indexedDB.js" defer></script>
+    <script src="js/init.js" defer></script>
+    <script src="js/render.js" defer></script>
+    <script src="js/select_manner.js" defer></script>
+    <script src="js/dataURLtoBlob.js" defer></script>
+    <script src="js/img_both_inpt_set.js" defer></script>
+    <script src="js/draw_personalization.js" defer></script>
+    <script src="js/download_img.js" defer></script>
+    <script src="js/drawMine.js" defer></script>
+    <script src="js/onload.js" defer></script>
 </body>
 
 </html>
