@@ -1,6 +1,5 @@
 /**
- * drawMine.js (自然进场优化版)
- * 修复：进场线改为右上角自然的“小尾巴”，顺势切入跑道
+ * drawMine.js (修复横穿线BUG + 右上角自然进场 + 剧烈抖动)
  */
 
 // ==========================================
@@ -13,62 +12,91 @@ function generateLocalTrackData() {
     const LENGTH = 115;   
     const ROTATE = -4;    
     const BASE_R = 61;    
-    const STEP = 15; // 保持大步长，保留真实感      
+    const STEP = 15; // 大步长，保留真实感      
+
+    // 1. 先生成一个标准的“底板”圈 (不带噪点)
+    // 这里的目的是确定形状和起点位置
+    const baseLap = generateBaseEllipse(BASE_CX, BASE_CY, LENGTH, BASE_R, STEP);
+
+    // 2. 找到“右上角”的索引，重新排列底板
+    // 上直道结束的位置大约就是右上角
+    const pointsPerStraight = Math.floor(LENGTH / STEP);
+    const shiftIndex = pointsPerStraight + 2; // 稍微往弯道进一点点
+
+    // 重新排序：将起点强制变更为右上角
+    // 这样我们后续复制圈数时，每一圈的起点就天然在右上角了
+    const part1 = baseLap.slice(0, shiftIndex);
+    const part2 = baseLap.slice(shiftIndex);
+    const rotatedBaseLap = part2.concat(part1);
 
     let allPoints = [];
     
-    // 模拟跑 5 到 8 圈
+    // 3. 基于旋转后的底板，生成 5 到 8 圈
     const laps = Math.floor(Math.random() * 4) + 5; 
 
     for (let i = 0; i < laps; i++) {
-        // 随机扰动
+        // 每一圈的随机参数 (道次漂移)
         const r_noise = (Math.random() * 6 - 3); 
         const cy_noise = (Math.random() * 4 - 2);
         const cx_noise = (Math.random() * 2 - 1);
         
-        const currentR = BASE_R + r_noise;
-        const currentCY = BASE_CY + cy_noise;
-        const currentCX = BASE_CX + cx_noise;
+        // 基于底板生成带有噪点的这一圈
+        const currentLapPoints = rotatedBaseLap.map(p => ({
+            x: p.x + cx_noise + (p.isVertical ? r_noise : 0), // 简化的变形逻辑
+            y: p.y + cy_noise + (p.isVertical ? 0 : r_noise)
+        }));
+
+        // 为了增加真实感，我们不能直接用currentLapPoints，因为那样太圆滑
+        // 我们需要重新通过算法生成点，但要确保起点对齐
+        // 最简单的方法：直接调用 generateEllipse 但使用修正后的起始角度？
+        // 不，为了保证连续性，我们采用“基于点偏移”的方法更稳妥。
         
-        let lapPoints = generateEllipse(currentCX, currentCY, LENGTH, currentR, STEP);
+        // 重新生成一圈数据，这次我们直接生成一长串连续的数据
+        // 但为了避免横穿线，我们采用更简单的策略：
+        // 直接按顺序生成多圈，每一圈都在上一圈的末尾继续
+        
+        // 修正策略：我们放弃上面的 map，直接用循环生成连续点
+    }
+
+    // --- 修正后的生成逻辑 (解决横穿线) ---
+    allPoints = [];
+    
+    // 进场线的目标点 (右上角估算坐标)
+    const startTargetX = BASE_CX + LENGTH/2 - 5; 
+    const startTargetY = BASE_CY - BASE_R + 5;
+    
+    // 生成进场线
+    const entryPoints = generateNaturalEntry({x: startTargetX, y: startTargetY});
+    allPoints = [...entryPoints];
+
+    // 开始跑圈
+    for (let i = 0; i < laps; i++) {
+        const r_drift = (Math.random() * 6 - 3); // 半径漂移
+        const cx_drift = (Math.random() * 2 - 1);
+        const cy_drift = (Math.random() * 4 - 2);
+
+        // 关键：generateRotatedLap 生成的是从右上角开始的一整圈
+        const lapPoints = generateRotatedLap(
+            BASE_CX + cx_drift, 
+            BASE_CY + cy_drift, 
+            LENGTH, 
+            BASE_R + r_drift, 
+            STEP
+        );
         allPoints = allPoints.concat(lapPoints);
     }
 
-    // 结束缓冲段
-    const endLapPoints = generateEllipse(BASE_CX, BASE_CY, LENGTH, BASE_R, STEP);
-    const cutIndex = Math.floor(endLapPoints.length * 0.3 + Math.random() * (endLapPoints.length * 0.3));
+    // 结束缓冲 (跑 20% - 50% 圈后停下)
+    const endLapPoints = generateRotatedLap(BASE_CX, BASE_CY, LENGTH, BASE_R, STEP);
+    const cutIndex = Math.floor(endLapPoints.length * 0.2 + Math.random() * (endLapPoints.length * 0.3));
     allPoints = allPoints.concat(endLapPoints.slice(0, cutIndex));
 
-    // ✅ 关键修改1：精准定位跑道起点到“右上角”
-    // 跑道生成顺序是：上直道(左->右) -> 右弯道 -> ...
-    // 上直道结束的点，就是右上角
-    const pointsPerStraight = Math.floor(LENGTH / STEP);
-    // 我们让起点稍微往弯道里走一点点，这样衔接更自然
-    const shiftIndex = pointsPerStraight + 2; 
-    
-    // 数组轮转
-    if (allPoints.length > shiftIndex) {
-        const part1 = allPoints.slice(0, shiftIndex);
-        const part2 = allPoints.slice(shiftIndex);
-        allPoints = part2.concat(part1);
-    }
-
-    // ✅ 关键修改2：生成自然的“小尾巴”进场线
-    // 目标点是跑道的现在的起点（右上角）
-    const startTarget = allPoints[0];
-    // 参考点是跑道的第二个点，用于计算切入角度
-    const nextPoint = allPoints[1];
-    
-    const extraStart = generateNaturalEntry(startTarget, nextPoint);
-    
-    let finalPoints = [...extraStart, ...allPoints];
-
-    // --- 坐标变换 ---
+    // --- 坐标变换 (整体旋转) ---
     const rad = ROTATE * Math.PI / 180; 
     const cos = Math.cos(rad);
     const sin = Math.sin(rad);
 
-    const resultData = finalPoints.map((p, index) => {
+    const resultData = allPoints.map((p, index) => {
         let dx = p.x - BASE_CX;
         let dy = p.y - BASE_CY;
         let rx = dx * cos - dy * sin;
@@ -76,9 +104,9 @@ function generateLocalTrackData() {
         let finalX = rx + BASE_CX;
         let finalY = ry + BASE_CY;
         
-        // GPS 噪点
-        const noiseX = Math.random() * 2.2 - 1.1;
-        const noiseY = Math.random() * 2.2 - 1.1;
+        // GPS 噪点 (剧烈抖动)
+        const noiseX = Math.random() * 2.5 - 1.25;
+        const noiseY = Math.random() * 2.5 - 1.25;
 
         return {
             action: index === 0 ? 'down' : 'move',
@@ -87,7 +115,7 @@ function generateLocalTrackData() {
         };
     });
 
-    // 50% 概率反向跑 (中心对称)
+    // 50% 概率反向跑
     if (Math.random() < 0.5) {
         resultData.forEach(p => {
             p.x = BASE_CX - (p.x - BASE_CX);
@@ -104,71 +132,85 @@ function generateLocalTrackData() {
     return resultData;
 }
 
-// 辅助：生成单圈椭圆
-function generateEllipse(cx, cy, length, r, step) {
+// 生成一圈数据，但是起点强制设定在“右上角”
+// 顺序：右半圆(部分) -> 下直道 -> 左半圆 -> 上直道 -> 右半圆(剩余)
+// 为了代码简单，我们还是生成标准圈，然后数组轮转
+function generateRotatedLap(cx, cy, length, r, step) {
     let points = [];
-    // 上直道
+    // 1. 上直道 (左->右)
     for (let x = cx - length/2; x <= cx + length/2; x += step) {
         points.push({x: x, y: cy - r + (Math.random()*2 - 1)});
     }
-    // 右半圆
+    // 2. 右半圆
     for (let angle = -Math.PI/2; angle <= Math.PI/2; angle += step/r) {
         points.push({
             x: cx + length/2 + r * Math.cos(angle),
             y: cy + r * Math.sin(angle)
         });
     }
-    // 下直道
+    // 3. 下直道 (右->左)
     for (let x = cx + length/2; x >= cx - length/2; x -= step) {
         points.push({x: x, y: cy + r + (Math.random()*2 - 1)});
     }
-    // 左半圆
+    // 4. 左半圆
     for (let angle = Math.PI/2; angle <= 1.5*Math.PI; angle += step/r) {
         points.push({
             x: cx - length/2 + r * Math.cos(angle),
             y: cy + r * Math.sin(angle)
         });
     }
+    
+    // 轮转数组，把起点移到右上角 (上直道结束处)
+    const pointsPerStraight = Math.floor(length / step);
+    const shiftIndex = pointsPerStraight + 2; 
+
+    if (points.length > shiftIndex) {
+        const part1 = points.slice(0, shiftIndex);
+        const part2 = points.slice(shiftIndex);
+        return part2.concat(part1);
+    }
     return points;
 }
 
-// ✅ 新增：自然的进场“小尾巴”生成器
-function generateNaturalEntry(target, nextPoint) {
+// 仅用于辅助计算轮转索引的底板生成器 (无噪点)
+function generateBaseEllipse(cx, cy, length, r, step) {
     let points = [];
-    const numPoints = 6; // 短一点，不要太长
+    for (let x = cx - length/2; x <= cx + length/2; x += step) points.push({x:x, y:cy-r});
+    for (let angle = -Math.PI/2; angle <= Math.PI/2; angle += step/r) points.push({x:cx+length/2+r*Math.cos(angle), y:cy+r*Math.sin(angle)});
+    for (let x = cx + length/2; x >= cx - length/2; x -= step) points.push({x:x, y:cy+r});
+    for (let angle = Math.PI/2; angle <= 1.5*Math.PI; angle += step/r) points.push({x:cx-length/2+r*Math.cos(angle), y:cy+r*Math.sin(angle)});
+    return points;
+}
+
+
+// 自然的进场“小尾巴”生成器 (指向右上角)
+function generateNaturalEntry(target) {
+    let points = [];
+    const numPoints = 8; 
     
-    // 1. 确定场外起点 (Start Origin)
-    // 我们希望它在右上角的外侧 (郑和路方向)
-    // X轴：比目标点偏右 15px ~ 35px
-    // Y轴：比目标点偏上 20px ~ 40px
-    const offsetX = 15 + Math.random() * 20; 
-    const offsetY = -20 - Math.random() * 20;
+    // 场外起点：目标点偏右 20-40px，偏上 20-50px
+    const offsetX = 20 + Math.random() * 20; 
+    const offsetY = -30 - Math.random() * 20;
     
     const startOrigin = {
         x: target.x + offsetX,
         y: target.y + offsetY
     };
 
-    // 2. 生成贝塞尔曲线或平滑插值
-    // 从 startOrigin 慢慢弯向 target
-    // 模拟人跑进来的惯性
     for(let i = 0; i < numPoints; i++) {
-        const t = i / numPoints; // 0 到 1
-        
-        // 简单的线性插值 + 垂直扰动模拟转弯弧度
-        // 这里的逻辑是：让线条不是直直的连过去，而是带一点弧度
+        const t = i / numPoints;
+        // 简单的曲线插值
         let currentX = startOrigin.x + (target.x - startOrigin.x) * t;
         let currentY = startOrigin.y + (target.y - startOrigin.y) * t;
         
-        // 加一点点弧度修正 (向外鼓一点)
-        const arcCurve = Math.sin(t * Math.PI) * 5;
+        // 弧度修正
+        const arcCurve = Math.sin(t * Math.PI / 2) * 8;
         
         points.push({
-            x: currentX + arcCurve, 
-            y: currentY + (Math.random()*2 - 1) // 加上GPS抖动
+            x: currentX - arcCurve, 
+            y: currentY + (Math.random()*2 - 1)
         });
     }
-    
     return points;
 }
 
@@ -272,7 +314,7 @@ function drawMarker(ctx, x, y, color, scale) {
 // 3. 主界面入口
 // ==========================================
 async function drawMine(ignoredUrl) {
-    console.log("本地生成：自然进场优化版...");
+    console.log("本地生成：修复横穿线版...");
     let bgSrc = "";
     if (typeof tmp_bgimg_osrc !== 'undefined' && tmp_bgimg_osrc) bgSrc = tmp_bgimg_osrc;
     else if (typeof use_default_bg !== 'undefined' && use_default_bg) bgSrc = default_bgSRC[1];
