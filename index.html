@@ -99,4 +99,186 @@
                         <div class="background-color-block1">
                             <small>随机范围 (用于生成截图时微调)：</small><br>
                             最小: <input type="text" id="min_miles" onchange="set_km_and_speed()" class="mile2-inp range-input">
-                            ~ 最大: <input type="text" id="max_miles" onchange="set_km_an
+                            ~ 最大: <input type="text" id="max_miles" onchange="set_km_and_speed()" class="mile2-inp range-input">
+                        </div>
+                    </li>
+                    <li>
+                        <label>配速：</label>
+                        <input id="inpt_speeds" onchange="setData()" type="text" class="mile2-inp" placeholder="例如 5'30&quot;">
+                        <!-- 修复优化：增加正确的 placeholder 提示 -->
+                        <div class="background-color-block1">
+                            <small>随机范围 (注意: 秒数不要超过59)：</small><br>
+                            最快: <input type="text" id="min_speeds" onchange="set_km_and_speed()" class="mile2-inp range-input" placeholder="4'30&quot;">
+                            ~ 最慢: <input type="text" id="max_speeds" onchange="set_km_and_speed()" class="mile2-inp range-input" placeholder="5'15&quot;">
+                        </div>
+                    </li>
+                </div>
+
+                <!-- 3. 时间与环境 -->
+                <div class="background-color-block2">
+                    <li>
+                        <label>运动时间：</label>
+                        <input id="inpt_year" onchange="setData()" type="text" class="time-inp year-inp"><span>年</span>
+                        <input id="inpt_month" onchange="setData()" type="text" class="time-inp"><span>月</span>
+                        <input id="inpt_day" onchange="setData()" type="text" class="time-inp"><span>日</span>
+                        &nbsp;&nbsp;
+                        <input id="inpt_hour" onchange="setData()" type="text" class="time-inp"><span>:</span>
+                        <input id="inpt_min" onchange="setData()" type="text" class="time-inp">
+                    </li>
+                </div>
+                <div class="weather-container">
+                    <div class="background-color-block2">
+                        <li>
+                            <label>天气环境：</label>
+                            <select onchange="weather_Select_onChange()" id="weather_Select">
+                                <option value="images/weather1.png">☀ 晴</option>
+                                <option value="images/weather2.png">⛅ 多云</option>
+                                <option value="images/weather3.png">☁ 阴天</option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>气温/湿度：</label>
+                            <input id="inpt_temperature" onchange="setData()" type="text" style="width:50px;" placeholder="°C"> °C
+                            &nbsp;&nbsp;
+                            <input id="inpt_humidity" onchange="setData()" type="text" style="width:50px;" placeholder="%"> %
+                            <span class="ApiExplanation" style="display:inline-block; margin-left:10px;">(默认自动获取实时数据)</span>
+                        </li>
+                    </div>
+                </div>
+
+                <!-- 4. 地图与轨迹设置 -->
+                <div class="background-green">
+                    <li>
+                        <label>地图背景：</label>
+                        <select onchange="default_bgImgSelect_onChange()" id="default_bgImgSelect">
+                            <option value="guiji_Select_1">哈尔滨工程大学-南体育场</option>
+                            <option value="guiji_Select_2">军工操场</option>
+                            <option value="guiji_Select_3">北体育场</option>
+                        </select>
+                    </li>
+                    <li>
+                        <label>自定义地图：</label>
+                        <button onclick="inpt_bgimg_onClick()">上传图片</button>
+                        <input style="display:none;" type="file" accept="image/*" id="inpt_bgimg" onchange="bgimg_inpt()" />
+                        <button onclick="init_bgimg()" class="init-btn">重置</button>
+                    </li>
+
+                    <li>
+                        <label>轨迹样式：</label>
+                        <!-- 预设轨迹选择组 -->
+                        <select onchange="guijiSelect_onChange()" id="guiji_Select_1" class="guijiSelect">
+                            <option value="['images/bg1_1.png', 'images/bg1_empty2.png']">预设路径 1</option>
+                            <option value="['images/bg1_2.png', 'images/bg1_empty2.png']">预设路径 2</option>
+                            <option value="['images/bg1_3.png', 'images/bg1_empty2.png']">预设路径 3</option>
+                            <option value="['images/bg1_4.png', 'images/bg1_empty2.png']">预设路径 4</option>
+                            <option value="['images/bg1_5.png', 'images/bg1_empty2.png']">预设路径 5</option>
+                            <option value="['images/bg1_empty2.png', 'images/bg1_empty2.png']">无预设</option>
+                        </select>
+                        <select onchange="guijiSelect_onChange()" id="guiji_Select_2" class="guijiSelect">
+                            <option value="['images/bg2_empty.png', 'images/bg2_empty.png']">无预设</option>
+                        </select>
+                        <select onchange="guijiSelect_onChange()" id="guiji_Select_3" class="guijiSelect">
+                            <option value="['images/bg3_empty.png', 'images/bg3_empty.png']">无预设</option>
+                        </select>
+                        
+                        <button onclick="inpt_drawbtn_onClick()" style="margin-left: 10px;">✍️ 手绘轨迹</button>
+                    </li>
+                    
+                    <!-- 轨迹选项 -->
+                    <li>
+                        <label>加载选项：</label>
+                        <input type="checkbox" id="auto_draw_checkbox" onchange="auto_draw_checkbox_onchange()" checked />
+                        <span>页面加载时自动生成路径</span>
+                    </li>
+                    <li>
+                        <label>轨迹特效：</label>
+                        <input type="checkbox" id="inpt_colorchange_checkbox" onchange="inpt_colorchange_checkbox_onchange()" checked />
+                        <span>启用渐变色 (模拟配速变化)</span>
+                    </li>
+                    <li id="bs_prop_inpt_wrap">
+                        <label>变色概率：</label>
+                        <input id="inpt_bs_prob" onchange="setData()" type="text" placeholder="0-1之间">
+                    </li>
+                    <li id="inpt_bs_range_wrap">
+                        <label>变色步长：</label>
+                        <input id="inpt_bs_range_min" onchange="setData()" type="text" style="width: 50px;">
+                        <span>~</span>
+                        <input id="inpt_bs_range_max" onchange="setData()" type="text" style="width: 50px;">
+                    </li>
+                </div>
+                
+                <div class="background-green">
+                    <li>
+                        <label>生成宽度：</label>
+                        <input id="inpt_savePic_width" onchange="setData()" type="text" placeholder="默认宽度"> px
+                    </li>
+                </div>
+                
+                <!-- 底部大按钮 -->
+                <li style="margin-top: 20px;">
+                    <button onclick="Download(Download1)" class="large-btn" style="width: 100%;">💾 生成并保存图片</button>
+                </li>
+                <li style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="Download(Download3)" style="flex: 1;">备用下载方案 1</button>
+                    <button onclick="Download(Download4)" style="flex: 1;">备用下载方案 2</button>
+                </li>
+            </ul>
+
+            <!-- 手动绘制弹窗 -->
+            <div id="drawpic_overlay">
+                <div class="drawpic_popup">
+                    <div>
+                        <h3>绘制轨迹</h3>
+                        <p style="font-size: 12px; color: #666;">在下方画布拖动鼠标或手指绘制路径</p>
+                    </div>
+                    <div id="drawpic_canvas_wrap2">
+                        <div id="drawpic_canvas_wrap">
+                            <canvas id="drawpic_canvas" width="1" height="1"></canvas>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button onclick="Json2Draw()" class="flush-btn">🎲 随机生成</button>
+                        <button onclick="drawpic_initbtn_onClick()" class="init-btn">清空画布</button>
+                        <div style="height: 10px;"></div>
+                        <button onclick="drawpic_hidebtn_onClick()">取消</button>
+                        <button onclick="drawpic_yesbtn_onClick()" class="large-btn">确认使用</button>
+                    </div>
+                    <canvas id="buffer_canvas" style="display: none;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部免责说明 -->
+        <div class="warning-wrap">
+            <div class="warning">
+                <b>⚠️ 免责声明</b>
+                <span>本工具仅供编程学习与界面设计交流，请勿用于任何虚假打卡或商业用途。</span>
+            </div>
+            <div class="explanation" style="margin-top: 10px; font-size: 13px;">
+                <p>🛠 <b>功能说明：</b></p>
+                <p>1. 修改上方输入框内容，预览图实时更新。</p>
+                <p>2. 点击“保存设置”可将头像和昵称缓存在本地，下次无需重复输入。</p>
+                <p>3. 支持自动获取当前城市的实时气温和湿度。</p>
+                <p>🔗 项目开源地址：<a href="https://gitee.com/joytion/keep/" target="_blank">Gitee - KEEPro</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🚀 脚本优化：全部使用 defer 异步加载，不阻塞页面渲染 -->
+    <script src="js/invoke/html2canvas.min.js" defer></script>
+    <script src="js/invoke/amapHelper.js" defer></script>
+    <script src="js/indexedDB.js" defer></script>
+    <script src="js/init.js" defer></script>
+    <script src="js/render.js" defer></script>
+    <script src="js/select_manner.js" defer></script>
+    <script src="js/dataURLtoBlob.js" defer></script>
+    <script src="js/img_both_inpt_set.js" defer></script>
+    <script src="js/draw_personalization.js" defer></script>
+    <script src="js/download_img.js" defer></script>
+<!-- 在这里插入新脚本 -->
+    <script src="js/localTrackGen.js"></script> 
+    <script src="js/drawMine.js" defer></script>
+    <script src="js/onload.js" defer></script>
+</body>
+
+</html>
