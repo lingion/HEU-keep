@@ -2,41 +2,36 @@
 <html lang="en">
 
 <head>
-    <!-- Google tag (gtag.js) -->
+    <!-- 谷歌统计 (如不需要可删除以进一步加速) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-4C56GQP4ZL"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-
         gtag('config', 'G-4C56GQP4ZL');
     </script>
 
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 优化视口设置，禁止用户缩放，体验更像原生App -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="browsermode" content="application">
-    <meta name="full-screen" content="yes" />
-    <meta name="x5-fullscreen" content="true" />
-    <meta name="x5-page-mode" content="app" />
-    <meta name="360-fullscreen" content="true" />
+    
     <title>KEEPro</title>
     <link rel="icon" href="./favicon.ico">
     <link rel="shortcut icon" href="./favicon.ico">
-    <link rel="stylesheet" href="./css/styles.css"> <!-- 引用外部CSS文件 -->
+    <link rel="stylesheet" href="./css/styles.css">
+
+    <!-- 🚀 性能优化：预加载核心数字字体，防止加载时数字跳变 -->
+    <link rel="preload" href="./DINCond-Bold.otf" as="font" type="font/otf" crossorigin>
 </head>
 
 <body id="body">
-    <div class="content">
-        <hr class="hr">
-        <div class="container">
-            <span id="hitokoto">正在获取中...</span>
-        </div>
-        <script src="https://v1.hitokoto.cn/?encode=js&select=%23hitokoto" defer></script>
-    </div>
+    <!-- 已移除顶部的 hitokoto 一言代码 -->
+
     <div id="main-div">
+        <!-- 左侧：预览图区域 -->
         <div id="new-Img" class="new-img">
             <div class="bgimgwrap" id="bgimgwrap">
                 <img src="" class="innerbgimg" id="bg-img" />
@@ -46,7 +41,7 @@
                 <img class="portrait" id="portrait" src="" />
             </div>
             <div class="weather-imgwrap">
-                <img src="" class="weather" id="weather" src="" />
+                <img src="" class="weather" id="weather" />
             </div>
             <span class="username" id="username">UserName</span>
             <span class="keep-title" id="keep-title">户外跑步</span>
@@ -59,23 +54,24 @@
             <span class="speed-time cost-time" id="cost-time">00:00:00</span>
             <span class="speed-time calorie" id="calorie">0</span>
         </div>
+
+        <!-- 右侧：控制面板区域 -->
         <div class="set-data">
-            <div id="messageBox">
-            </div>
+            <div id="messageBox"></div>
+            
+            <!-- 顶部按钮组 -->
             <div class="header-container">
-                <!-- <h4>&nbsp;数据设置&nbsp;</h4>&nbsp; -->
                 <button onclick="Download(Download1)" class="one_click">下载图片</button>&nbsp;
                 <button onclick="Download(Download2)" class="one_click">查看图片</button>&nbsp;&nbsp;&nbsp;
-                <button onclick="drawMine('https://tool.joytion.cn/generate-track')"
-                    class="flush-btn">更新绘画更径</button>&nbsp;&nbsp;&nbsp;
-                <button onclick="storeToIndexedDB(tmp_portrait_src,tmp_bgimg_osrc)"
-                    class="storeToIndexedDB-btn">永存带√信息</button>
+                <button onclick="drawMine('https://tool.joytion.cn/generate-track')" class="flush-btn">更新绘画路径</button>&nbsp;&nbsp;&nbsp;
+                <button onclick="storeToIndexedDB(tmp_portrait_src,tmp_bgimg_osrc)" class="storeToIndexedDB-btn">永存带√信息</button>
                 <connect>&nbsp&nbsp</connect>
                 <button onclick="clearIndexedDB()" class="clear-btn">重置</button>
             </div>
 
             <ul class="setDataList">
                 <hr />
+                <!-- 用户信息设置 -->
                 <div class="background-green">
                     <li>
                         <label data-text="√">√用户名：</label>
@@ -84,8 +80,7 @@
                     <li>
                         <label data-text="√">√头像：</label>
                         <button onclick="inpt_portrait_onClick()" class="inpt-btn">选择图片</button>
-                        <input style="display:none;" type="file" accept="image/*" id="inpt_portrait"
-                            onchange="portrait_inpt()" />
+                        <input style="display:none;" type="file" accept="image/*" id="inpt_portrait" onchange="portrait_inpt()" />
                         <button onclick="init_portrait()" class="init-btn">恢复默认</button></br>
                     </li>
                     <li>
@@ -94,31 +89,29 @@
                         <input id="inpt_keep_title" onchange="setData()" type="text" class="keep-title-inp">
                     </li>
                 </div>
-                </li>
+                
                 <hr />
+                <!-- 运动数据设置 -->
                 <div class="background-blue">
                     <li>
                         <label data-text="#rand">公里#rand：</label>
                         <input id="inpt_miles" onchange="setData()" class="mile2-inp">
                         <div class="background-color-block1">
-                            √Min: <input type="text" id="min_miles" onchange="set_km_and_speed()"
-                                class="mile2-inp range-input">
-                            √Max: <input type="text" id="max_miles" onchange="set_km_and_speed()"
-                                class="mile2-inp range-input">
+                            √Min: <input type="text" id="min_miles" onchange="set_km_and_speed()" class="mile2-inp range-input">
+                            √Max: <input type="text" id="max_miles" onchange="set_km_and_speed()" class="mile2-inp range-input">
+                        </div>
                     </li>
                     <li>
                         <label data-text="#rand">配速#rand：</label>
                         <input id="inpt_speeds" onchange="setData()" type="text" class="mile2-inp">
                         <div class="background-color-block1">
-                            √Min: <input type="text" id="min_speeds" onchange="set_km_and_speed()"
-                                class="mile2-inp range-input">
-                            √Max: <input type="text" id="max_speeds" onchange="set_km_and_speed()"
-                                class="mile2-inp range-input">
+                            √Min: <input type="text" id="min_speeds" onchange="set_km_and_speed()" class="mile2-inp range-input">
+                            √Max: <input type="text" id="max_speeds" onchange="set_km_and_speed()" class="mile2-inp range-input">
                         </div>
                     </li>
-
                 </div>
 
+                <!-- 时间与天气 -->
                 <div class="background-color-block2" data-text="#live">
                     <li>
                         <label data-text="#live">时间#live:</label>
@@ -135,7 +128,6 @@
                     </li>
                 </div>
                 <div class="weather-container">
-
                     <div class="background-color-block2" data-text="#live">
                         <li>
                             <label data-text="#live">天气#live:</label>
@@ -150,8 +142,7 @@
                             <input id="inpt_humidity" onchange="setData()" type="text">
                             <br>
                             <div class="align-center">
-                                <span
-                                    class="ApiExplanation">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp将通过Api获取实时温湿度</span>
+                                <span class="ApiExplanation">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp将通过Api获取实时温湿度</span>
                             </div>
                         </li>
                     </div>
@@ -159,6 +150,7 @@
 
                 <hr />
 
+                <!-- 背景与轨迹 -->
                 <div class="background-green">
                     <li>
                         <label data-text="√">√背景：</label>
@@ -171,8 +163,7 @@
                     <li>
                         <label data-text="√">√自定义背景：</label>
                         <button onclick="inpt_bgimg_onClick()">选择图片</button>
-                        <input style="display:none;" type="file" accept="image/*" id="inpt_bgimg"
-                            onchange="bgimg_inpt()" />
+                        <input style="display:none;" type="file" accept="image/*" id="inpt_bgimg" onchange="bgimg_inpt()" />
                         <button onclick="init_bgimg()" class="init-btn">恢复默认</button>
                     </li>
 
@@ -197,13 +188,11 @@
                     </li>
                     <li>
                         <label data-text="√">√加载时自动绘画路径</label>
-                        <input type="checkbox" id="auto_draw_checkbox" onchange="auto_draw_checkbox_onchange()"
-                            checked /><span>自动</span>
+                        <input type="checkbox" id="auto_draw_checkbox" onchange="auto_draw_checkbox_onchange()" checked /><span>自动</span>
                     </li>
                     <li>
                         <label data-text="√">√路径变色：</label>
-                        <input type="checkbox" id="inpt_colorchange_checkbox"
-                            onchange="inpt_colorchange_checkbox_onchange()" checked /><span>启用</span>
+                        <input type="checkbox" id="inpt_colorchange_checkbox" onchange="inpt_colorchange_checkbox_onchange()" checked /><span>启用</span>
                     </li>
                     <li id="bs_prop_inpt_wrap">
                         <label data-text="√">√变色概率：</label>
@@ -223,13 +212,10 @@
                         <input id="inpt_savePic_width" onchange="setData()" type="text">
                     </li>
                 </div>
-                <!-- <li>
+                
+                <!-- 下载选项 -->
+                <li>
                     <button onclick="Download(Download1)" class="large-btn">保存图片</button>
-                </li> -->
-                <!-- <li>
-                    <button onclick="Download(Download2)">查看图片</button>
-                <li> -->
-                <button onclick="Download(Download1)" class="large-btn">保存图片</button>
                 </li>
                 <li>
                     <button onclick="Download(Download3)">保存图片</button>
@@ -240,6 +226,8 @@
                     <span>(备用方案2, 请手动重命名下载文件)</span>
                 </li>
             </ul>
+
+            <!-- 手动绘制弹窗 -->
             <div id="drawpic_overlay">
                 <div class="drawpic_popup">
                     <div>
@@ -254,9 +242,7 @@
                         <button onclick="drawpic_hidebtn_onClick()">取消</button>
                         <button onclick="drawpic_initbtn_onClick()" class="init-btn">重置</button>
                         <li>
-                            <!-- <button onclick="saveDrawingToFile()">保存json</button> -->
-                            <button
-                                onclick="Json2Draw('https://tool.joytion.cn/generate-track')">随机生成路径</button>&lt--适配预设1
+                            <button onclick="Json2Draw('https://tool.joytion.cn/generate-track')">随机生成路径</button>
                         </li>
                         <button onclick="drawpic_yesbtn_onClick()">确定</button>
                     </div>
@@ -264,6 +250,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- 底部说明 -->
         <div class="warning-wrap">
             <ul class="setDataList">
                 <li>
@@ -281,11 +269,6 @@
                         <span>keep运动截图生成&ensp;v3.1</span>
                         <br />
                         <span>项目地址：<a href="https://gitee.com/joytion/keep/" target="_blank">KEEPro</a></span>
-                        <br />
-                        <span>项目历程：<a href="https://gitee.com/jimaske/njupt-keep" target="_blank">@jimaske</a>--&gt<a
-                                href="https://gitee.com/fyhb/keep" target="_blank">@fyhb</a>--&gt<a
-                                href="https://gitee.com/joytion/my_keep/" target="_blank">@joytion</a>--&gt<a
-                                href="https://gitee.com/joytion/keep/" target="_blank">@joytion(KEEPro)</a></span>
                     </div>
                 </li>
                 <br />
@@ -300,106 +283,25 @@
                         <span>3、系列细节优化</span>
                         <br />
                         <span>4、通过后端随机生成路径</span>
-                        <br />
-                        <div class="explanation">
-                            <span>计划：</span>
-                            <span>无。 已全部完成</span>
-                        </div>
                     </div>
                 </li>
             </ul>
         </div>
     </div>
-    <script src="js/invoke/html2canvas.min.js"></script>
-    <script src="js/invoke/amapHelper.js"></script>
-    <script src="js/indexedDB.js"></script>
-    <script src="js/init.js"></script>
-    <script src="js/render.js"></script>
-    <script src="js/select_manner.js"></script>
-    <script src="js/dataURLtoBlob.js"></script>
-    <script src="js/img_both_inpt_set.js"></script>
-    <script src="js/draw_personalization.js"></script>
-    <script src="js/download_img.js"></script>
-    <script src="js/drawMine.js"></script>
-    <script src="js/onload.js"></script>
 
-    <!-- 获取哈尔滨工程大学天气代码 -->
-    <script>
-        /**
-         * 获取哈尔滨工程大学实时天气
-         * 使用 Open-Meteo API (免费，无需Key)
-         */
-        async function getHeuWeather() {
-            // 哈尔滨工程大学南体育场附近坐标
-            const lat = 45.773;
-            const lon = 126.679;
-            
-            // API 地址：获取温度、湿度、天气代码
-            const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FShanghai`;
-
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error('Weather API failed');
-                
-                const data = await response.json();
-                const current = data.current;
-
-                // 1. 获取 DOM 元素
-                const tempInp = document.getElementById('inpt_temperature');
-                const humInp = document.getElementById('inpt_humidity');
-                const weatherSelect = document.getElementById('weather_Select');
-                
-                // 2. 更新数值
-                // 写入温度 (四舍五入)
-                if (tempInp) {
-                    tempInp.value = Math.round(current.temperature_2m);
-                    // 触发 onchange 事件，确保预览图同步更新
-                    tempInp.dispatchEvent(new Event('change'));
-                }
-
-                // 写入湿度 (加上百分号)
-                if (humInp) {
-                    humInp.value = Math.round(current.relative_humidity_2m) + '%';
-                    humInp.dispatchEvent(new Event('change'));
-                }
-
-                // 3. 自动切换天气图标
-                // Open-Meteo WMO Weather Code 映射到 Keep 的图标
-                // 0-1: 晴天, 2: 多云, 3: 阴天, 45+: 雾/雨/雪等归为阴雨
-                const wCode = current.weather_code;
-                let weatherVal = "images/weather1.png"; // 默认晴
-
-                if (wCode <= 1) {
-                    weatherVal = "images/weather1.png"; // 晴
-                } else if (wCode === 2) {
-                    weatherVal = "images/weather2.png"; // 多云
-                } else {
-                    weatherVal = "images/weather3.png"; // 阴/雨/雪
-                }
-
-                if (weatherSelect) {
-                    weatherSelect.value = weatherVal;
-                    // 触发 onchange 以更新图片
-                    weatherSelect.dispatchEvent(new Event('change')); 
-                }
-
-                console.log(`已更新哈工程天气: ${current.temperature_2m}°C, ${weatherVal}`);
-
-            } catch (error) {
-                console.error("天气获取失败:", error);
-                // 失败时的兜底数据
-                const tempEl = document.getElementById('inpt_temperature');
-                const humEl = document.getElementById('inpt_humidity');
-                if(tempEl) tempEl.value = "20";
-                if(humEl) humEl.value = "45%";
-            }
-        }
-
-        // 页面加载完成后执行
-        window.addEventListener('DOMContentLoaded', () => {
-            getHeuWeather();
-        });
-    </script>
+    <!-- 🚀 脚本优化：全部使用 defer 异步加载，不阻塞页面渲染 -->
+    <script src="js/invoke/html2canvas.min.js" defer></script>
+    <script src="js/invoke/amapHelper.js" defer></script>
+    <script src="js/indexedDB.js" defer></script>
+    <script src="js/init.js" defer></script>
+    <script src="js/render.js" defer></script>
+    <script src="js/select_manner.js" defer></script>
+    <script src="js/dataURLtoBlob.js" defer></script>
+    <script src="js/img_both_inpt_set.js" defer></script>
+    <script src="js/draw_personalization.js" defer></script>
+    <script src="js/download_img.js" defer></script>
+    <script src="js/drawMine.js" defer></script>
+    <script src="js/onload.js" defer></script>
 </body>
 
 </html>
