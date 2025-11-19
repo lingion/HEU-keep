@@ -1,118 +1,132 @@
 /**
- * drawMine.js (已修改版)
- * 拦截了原本的网络请求，改为调用本地 localTrackGen.js 生成数据
+ * drawMine.js - 修复版 (无需服务器)
  */
 
-// 1. 主界面"随机路径"按钮调用的函数
+// 1. 主界面"随机路径"按钮
 function drawMine(ignoredUrl) {
-    // 不再请求 url，直接生成数据
-    console.log("正在本地生成随机轨迹...");
-    
-    // 调用 localTrackGen.js 中的函数
-    const data = generateLocalTrackData();
+    // 检查依赖文件是否加载
+    if (typeof generateLocalTrackData !== 'function') {
+        alert("错误：未找到 localTrackGen.js，请检查 HTML 文件中是否正确引入了该脚本！");
+        return;
+    }
 
-    // 获取 canvas 对象 (假设 render.js 或其他地方定义了全局 ctx 或 canvas)
-    // 注意：这里我们需要复用项目原本的绘制逻辑。
-    // 由于项目结构复杂，最简单的方法是模拟 Json2Draw 的行为，
-    // 即：绘制到 buffer canvas，然后生成图片显示。
+    console.log("开始生成随机路径...");
+    const data = generateLocalTrackData();
     
-    // 我们直接复用下面的 renderToResultImage 逻辑
-    renderToResultImage(data);
+    // 获取画布
+    const canvas = document.getElementById("drawpic_canvas");
+    if (!canvas) {
+        alert("错误：找不到 ID 为 drawpic_canvas 的画布元素。");
+        return;
+    }
+
+    // 【关键修复】强制设置画布分辨率为 Keep 截图的标准宽度
+    // 如果不设置，默认可能是 1x1 或 300x150，导致画不上去或模糊
+    canvas.width = 360;
+    canvas.height = 719;
+
+    // 获取绘图上下文
+    const ctx = canvas.getContext("2d");
+    // 清空旧内容
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 绘制路径
+    drawDataToCanvas(ctx, data);
+
+    // 【关键修复】直接更新预览图，不依赖 drawpic_yesbtn_onClick
+    // 尝试找到原本用来显示手绘轨迹的图层
+    // 根据项目结构，通常 UI 遮罩是 gui-img，或者有一个背景图层
+    // 我们尝试复用 draw_personalization.js 里的逻辑，如果不行就手动更新
+    
+    if (typeof drawpic_yesbtn_onClick === 'function') {
+        // 如果原作者的"确认"函数存在，直接调用它，这最保险
+        try {
+            drawpic_yesbtn_onClick();
+            console.log("调用原有确认逻辑成功");
+        } catch (e) {
+            console.error("原有确认逻辑报错，尝试手动应用", e);
+            manualApply(canvas);
+        }
+    } else {
+        // 如果找不到确认函数，手动把 Canvas 转成图片贴上去
+        manualApply(canvas);
+    }
 }
 
-// 2. 弹窗中"随机生成"按钮调用的函数
+// 2. 弹窗中"随机生成"按钮
 function Json2Draw(ignoredUrl) {
-    console.log("弹窗模式：正在本地生成随机轨迹...");
-    const data = generateLocalTrackData();
+    if (typeof generateLocalTrackData !== 'function') {
+        alert("错误：未找到 localTrackGen.js");
+        return;
+    }
     
-    // 获取弹窗里的 canvas
+    const data = generateLocalTrackData();
     const canvas = document.getElementById("drawpic_canvas");
+    
     if (canvas) {
+        // 弹窗模式下也重置一下大小，保证清晰度
+        canvas.width = 360;
+        canvas.height = 719;
         const ctx = canvas.getContext("2d");
-        // 清空画布
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // 调用绘制函数 (根据 drawingActions.json 的结构绘制)
         drawDataToCanvas(ctx, data);
     }
 }
 
-// --- 辅助绘制函数 ---
+// --- 辅助函数 ---
 
-/**
- * 将数据绘制到指定的 Canvas Context 上
- */
+// 手动应用图片到预览区
+function manualApply(canvas) {
+    const dataURL = canvas.toDataURL("image/png");
+    
+    // 尝试查找各种可能的图片容器
+    // 1. 尝试找 gui-img (通常是前景图)
+    const guiImg = document.getElementById("gui-img");
+    // 2. 尝试找 bg-img (通常是地图背景)
+    const bgImg = document.getElementById("bg-img");
+    
+    // 这是一个妥协方案：直接把轨迹覆盖在 GUI 层上
+    // 如果这导致 UI 消失，请尝试换成 bgImg.src = dataURL (但这会覆盖地图)
+    if (guiImg) {
+        guiImg.src = dataURL;
+        // 某些 CSS 可能会隐藏 gui-img，强制显示
+        guiImg.style.display = 'block';
+    } else if (bgImg) {
+        // 如果没有 gui-img，只能覆盖背景了（不太推荐，但能看到效果）
+        bgImg.src = dataURL;
+    }
+}
+
+// 核心绘制逻辑
 function drawDataToCanvas(ctx, data) {
-    // 设置样式，模拟 Keep 的轨迹风格
+    // 模拟 Keep 的轨迹风格 (橙红色渐变)
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.lineWidth = 5; 
-    // 渐变色或纯色
-    ctx.strokeStyle = "rgba(250, 80, 80, 0.9)"; // 默认偏红色
+    ctx.lineWidth = 6; 
+    
+    // 创建渐变色
+    const gradient = ctx.createLinearGradient(0, 0, 360, 719);
+    gradient.addColorStop(0, "#ff512f"); // 红色
+    gradient.addColorStop(1, "#dd2476"); // 紫红
+    ctx.strokeStyle = gradient;
+    
+    // 添加发光效果
+    ctx.shadowBlur = 5;
+    ctx.shadowColor = "rgba(255, 50, 50, 0.6)";
 
     ctx.beginPath();
+    let isFirst = true;
+    
     data.forEach(point => {
-        if (point.action === 'down') {
+        // 坐标偏移修正：如果算法生成的坐标不在中心，这里可以手动微调
+        // 这里的 x,y 直接使用
+        if (point.action === 'down' || isFirst) {
             ctx.moveTo(point.x, point.y);
+            isFirst = false;
         } else if (point.action === 'move') {
             ctx.lineTo(point.x, point.y);
         }
     });
+    
     ctx.stroke();
-}
-
-/**
- * 直接渲染并更新主预览图 (对应 drawMine 功能)
- * 这一步稍微复杂，因为它需要更新 GUI 里的图片层
- */
-function renderToResultImage(data) {
-    // 1. 创建一个临时的 canvas 来绘制轨迹
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = 360;  // 预览图宽度
-    tempCanvas.height = 719; // 预览图高度
-    const ctx = tempCanvas.getContext('2d');
-
-    // 2. 绘制轨迹
-    // 开启发光效果，模拟 Keep 荧光感
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = "#fc5353";
-    
-    // 绘制渐变色轨迹
-    const gradient = ctx.createLinearGradient(0, 0, 360, 719);
-    gradient.addColorStop(0, "#ff9a9e");
-    gradient.addColorStop(1, "#fecfef");
-    ctx.strokeStyle = gradient;
-    
-    drawDataToCanvas(ctx, data);
-
-    // 3. 将 canvas 转为图片 URL 并设置给 GUI
-    const dataURL = tempCanvas.toDataURL('image/png');
-    
-    // 找到显示轨迹的那一层 img (在 HTML 中通常是 gui-img 或者专门的轨迹层)
-    // 根据原项目逻辑，可能是覆盖在 bg-img 上面的
-    // 如果原项目没有专门的轨迹 img 标签，通常是画在 canvas 上覆盖。
-    // 这里我们假设要把生成的图层叠加上去。
-    
-    // 注意：根据原 HTML 结构，有一个 <img id="gui-img"> 是 UI 遮罩。
-    // 轨迹通常是画在背景图或者单独的 canvas 上的。
-    // 这里尝试查找 render.js 里使用的目标。
-    
-    // 如果存在名为 'drawpic_canvas' 的元素，我们也可以直接画上去并确认为最终图
-    const mainCanvas = document.getElementById("drawpic_canvas");
-    if(mainCanvas) {
-        const mainCtx = mainCanvas.getContext("2d");
-        mainCtx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
-        drawDataToCanvas(mainCtx, data);
-        
-        // 触发“确认使用”按钮的逻辑 (如果有的话)，或者手动更新图片
-        // 这里尝试直接更新预览图逻辑 (如果有 drawpic_yesbtn_onClick 全局函数)
-        if(typeof drawpic_yesbtn_onClick === 'function') {
-            drawpic_yesbtn_onClick();
-        } else {
-            // 如果找不到确认函数，我们尝试直接把临时 canvas 覆盖到背景上
-            // 注意：这是一个 fallback，具体取决于原项目 styles.css 的层级
-             document.getElementById('gui-img').src = dataURL; // 可能会覆盖 UI
-             // 更好的做法可能是提示用户在弹窗里点确认
-        }
-    }
 }
