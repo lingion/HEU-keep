@@ -1,32 +1,29 @@
 /**
- * drawMine.js (最终完美版)
- * 优化点：圈数更多(5-9圈)、尺寸更大、线条更粗、抖动更真实
+ * drawMine.js (步长15 + 右上角起点 + 随机进场)
  */
 
 // ==========================================
 // 1. 核心算法：本地生成多圈随机轨迹
 // ==========================================
 function generateLocalTrackData() {
-    // --- 📍 核心参数调整 ---
-    const BASE_CX = 178;  // 圆心 X (保持不变)
-    const BASE_CY = 208;  // 圆心 Y (保持不变)
+    // --- 📍 核心参数 ---
+    const BASE_CX = 178;  
+    const BASE_CY = 208;  
+    const LENGTH = 115;   
+    const ROTATE = -4;    
+    const BASE_R = 61;    
     
-    // 1. 尺寸加大
-    const LENGTH = 115;   // 直道长度 (原106 -> 115)
-    const ROTATE = -4;    // 倾斜角度
-    const BASE_R = 61;    // 半径 (原56 -> 61)
-    const STEP = 15;       // 步长加密一点，让抖动更细腻
+    // ✅ 修改点1：步长改为 15 (折线感更强，更像真实GPS)
+    const STEP = 15;       
 
     let allPoints = [];
     
-    // 2. 圈数增加 (5 到 9 圈)
-    const laps = Math.floor(Math.random() * 5) + 5; 
+    // 模拟跑 5 到 8 圈
+    const laps = Math.floor(Math.random() * 4) + 5; 
 
     for (let i = 0; i < laps; i++) {
-        // 3. 每一圈的抖动 (道次漂移) 变得更剧烈
-        // 半径偏差扩大到 -3 到 +3 (模拟跨越多个跑道)
+        // 每一圈的随机扰动
         const r_noise = (Math.random() * 6 - 3); 
-        // 圆心位置偏差扩大
         const cy_noise = (Math.random() * 4 - 2);
         const cx_noise = (Math.random() * 2 - 1);
         
@@ -38,13 +35,29 @@ function generateLocalTrackData() {
         allPoints = allPoints.concat(lapPoints);
     }
 
-    // 增加结束缓冲段
+    // 结束缓冲段
     const endLapPoints = generateEllipse(BASE_CX, BASE_CY, LENGTH, BASE_R, STEP);
-    const cutIndex = Math.floor(endLapPoints.length * 0.3 + Math.random() * (endLapPoints.length * 0.4));
+    const cutIndex = Math.floor(endLapPoints.length * 0.3 + Math.random() * (endLapPoints.length * 0.3));
     allPoints = allPoints.concat(endLapPoints.slice(0, cutIndex));
 
-    // 进出场线条
-    const extraStart = generateLineData(BASE_CX, BASE_CY, BASE_R, true);
+    // ✅ 修改点2：强制将起点移至“右上角”
+    // 原理：生成的点默认从左上角开始，我们计算出第一条直道(Top Straight)的点数，将数组向前滚动
+    const pointsPerStraight = Math.floor(LENGTH / STEP);
+    // 移动索引，使其刚好落在直道结束、弯道开始的地方 (右上)
+    const shiftIndex = pointsPerStraight + 1; 
+    
+    // 数组轮转：把前面的点移到最后面，实现起点的改变但保持轨迹连续
+    if (allPoints.length > shiftIndex) {
+        const part1 = allPoints.slice(0, shiftIndex);
+        const part2 = allPoints.slice(shiftIndex);
+        allPoints = part2.concat(part1);
+    }
+
+    // ✅ 修改点3：随机进场路线 (目标是新的起点 allPoints[0])
+    // 生成一条从场外连到当前起点的线
+    const startTarget = allPoints[0];
+    const extraStart = generateEntryLine(startTarget);
+    
     let finalPoints = [...extraStart, ...allPoints];
 
     // --- 坐标变换 ---
@@ -53,22 +66,16 @@ function generateLocalTrackData() {
     const sin = Math.sin(rad);
 
     const resultData = finalPoints.map((p, index) => {
-        // 1. 归零
         let dx = p.x - BASE_CX;
         let dy = p.y - BASE_CY;
-        
-        // 2. 旋转
         let rx = dx * cos - dy * sin;
         let ry = dx * sin + dy * cos;
-        
-        // 3. 复位
         let finalX = rx + BASE_CX;
         let finalY = ry + BASE_CY;
         
-        // 4. GPS 噪点 (抖动更剧烈)
-        // 之前是 1.6范围，现在增加到 2.8范围，线条会更有“毛刺感”
-        const noiseX = Math.random() * 2.8 - 1.4;
-        const noiseY = Math.random() * 2.8 - 1.4;
+        // GPS 噪点 (步长大了，噪点稍微收一点点，不然太乱)
+        const noiseX = Math.random() * 2.0 - 1.0;
+        const noiseY = Math.random() * 2.0 - 1.0;
 
         return {
             action: index === 0 ? 'down' : 'move',
@@ -77,7 +84,7 @@ function generateLocalTrackData() {
         };
     });
 
-    // 50% 概率反向跑
+    // 50% 概率反向跑 (中心对称)
     if (Math.random() < 0.5) {
         resultData.forEach(p => {
             p.x = BASE_CX - (p.x - BASE_CX);
@@ -99,7 +106,6 @@ function generateEllipse(cx, cy, length, r, step) {
     let points = [];
     // 上直道
     for (let x = cx - length/2; x <= cx + length/2; x += step) {
-        // 直道也要加一点随机波浪
         points.push({x: x, y: cy - r + (Math.random()*2 - 1)});
     }
     // 右半圆
@@ -123,17 +129,31 @@ function generateEllipse(cx, cy, length, r, step) {
     return points;
 }
 
-// 辅助：生成进出场线条
-function generateLineData(cx, cy, r, isStart) {
+// ✅ 修改点4：随机进场线条生成器
+function generateEntryLine(targetPoint) {
     let points = [];
-    // 起点在左直道上方附近
-    const startX = cx - 65; // 稍微再往左一点，配合加大的半径 
-    const startY = cy - r - 25; 
+    const numPoints = 5; // 进场点数不用太多
     
-    for(let i=0; i<12; i++) {
+    // 随机决定进场方向：大部分情况从上方或右方进入
+    // offsetX/Y 决定了"场外点"相对于"起点"的位置
+    let offsetX = (Math.random() * 60) + 20; // 偏右 20~80px
+    let offsetY = (Math.random() * 60) - 30; // 上下随机浮动
+    
+    // 如果随机到负数，就是从上方进来
+    if(Math.random() > 0.6) {
+        offsetX = (Math.random() * 40) - 20;
+        offsetY = -(Math.random() * 50 + 30); // 偏上
+    }
+
+    const startX = targetPoint.x + offsetX;
+    const startY = targetPoint.y + offsetY;
+
+    for(let i=0; i<numPoints; i++) {
+        // 线性插值，从场外慢慢连到起点
+        const t = i / numPoints; 
         points.push({
-            x: startX + i*4 + Math.random()*2,
-            y: startY + i*2 + Math.random()*2
+            x: startX + (targetPoint.x - startX) * t + (Math.random()*4-2),
+            y: startY + (targetPoint.y - startY) * t + (Math.random()*4-2)
         });
     }
     return points;
@@ -141,14 +161,13 @@ function generateLineData(cx, cy, r, isStart) {
 
 
 // ==========================================
-// 2. 核心绘制逻辑 (线条加粗)
+// 2. 核心绘制逻辑 (保留之前的加粗)
 // ==========================================
 function drawDataHighFidelity(ctx, canvasWidth, canvasHeight, data) {
     return new Promise((resolve) => {
         const scale = canvasWidth / 360;
 
-        // 4. 线条加粗配置
-        // 之前是 5 * scale，现在改为 8 * scale
+        // 步长变大了，线条要足够粗才好看，保持 8px
         const LINE_WIDTH = 8 * scale; 
 
         let is_bs = false;
@@ -170,7 +189,7 @@ function drawDataHighFidelity(ctx, canvasWidth, canvasHeight, data) {
                 case 'down':
                     ctx.beginPath();
                     ctx.lineJoin = "round"; ctx.lineCap = "round";
-                    ctx.lineWidth = LINE_WIDTH; // 应用加粗
+                    ctx.lineWidth = LINE_WIDTH; 
                     ctx.strokeStyle = "rgb(38, 201, 154)";
                     ctx.moveTo(x, y);
                     draw_start_x = x; draw_start_y = y;
@@ -183,7 +202,7 @@ function drawDataHighFidelity(ctx, canvasWidth, canvasHeight, data) {
                     if (is_bs && bs_now >= bs_range) {
                         is_bs = false;
                         ctx.beginPath(); ctx.lineJoin = "round"; ctx.lineCap = "round";
-                        ctx.lineWidth = LINE_WIDTH.toString(); // 应用加粗
+                        ctx.lineWidth = LINE_WIDTH.toString(); 
                         ctx.moveTo(bs_pres_x, bs_pres_y);
                         ctx.lineTo(x, y);
                         let gradient = ctx.createLinearGradient(bs_pres_x, bs_pres_y, x, y);
@@ -192,7 +211,7 @@ function drawDataHighFidelity(ctx, canvasWidth, canvasHeight, data) {
                         ctx.strokeStyle = gradient; ctx.stroke();
                         bs_pres_color = [38, 201, 154];
                     }
-                    if (!is_bs && Math.random() < bs_prob && index < data.length - 15) {
+                    if (!is_bs && Math.random() < bs_prob && index < data.length - 5) { // 索引稍微放宽，因为点少了
                         is_bs = true;
                         let rg = 2 * Math.random() - 1;
                         if (rg > 0) bs_max = [Math.floor(193 * Math.pow(Math.abs(rg), 0.5)), Math.floor(-110 * Math.pow(Math.abs(rg), 0.5)), Math.floor(-66 * Math.pow(Math.abs(rg), 0.5))];
@@ -202,7 +221,7 @@ function drawDataHighFidelity(ctx, canvasWidth, canvasHeight, data) {
                     }
                     if (is_bs) {
                         ctx.beginPath(); ctx.lineJoin = "round"; ctx.lineCap = "round";
-                        ctx.lineWidth = LINE_WIDTH.toString(); // 应用加粗
+                        ctx.lineWidth = LINE_WIDTH.toString(); 
                         ctx.moveTo(bs_pres_x, bs_pres_y);
                         let bs_now_color = [
                             Math.floor(38 + (4 * bs_max[0] * bs_now / bs_range) * (1 - bs_now / bs_range)),
@@ -223,7 +242,6 @@ function drawDataHighFidelity(ctx, canvasWidth, canvasHeight, data) {
             processedCoords.push({ x, y });
         });
 
-        // 绘制起点终点 (图标也稍微加大一点)
         const endCoord = processedCoords[processedCoords.length - 1] || {x:0, y:0};
         drawMarker(ctx, draw_start_x, draw_start_y, '#26c99a', scale);
         drawMarker(ctx, endCoord.x, endCoord.y, '#ff5e5e', scale);
@@ -234,7 +252,6 @@ function drawDataHighFidelity(ctx, canvasWidth, canvasHeight, data) {
 function drawMarker(ctx, x, y, color, scale) {
     ctx.save();
     ctx.shadowBlur = 4; ctx.shadowColor = "rgba(0,0,0,0.3)";
-    // 稍微加大图标尺寸，配合加粗的线条
     ctx.beginPath(); ctx.arc(x, y, 8 * scale, 0, 2 * Math.PI); ctx.fillStyle = "#ffffff"; ctx.fill();
     ctx.beginPath(); ctx.arc(x, y, 6 * scale, 0, 2 * Math.PI); ctx.fillStyle = color; ctx.fill();
     ctx.restore();
@@ -244,7 +261,7 @@ function drawMarker(ctx, x, y, color, scale) {
 // 3. 主界面入口
 // ==========================================
 async function drawMine(ignoredUrl) {
-    console.log("本地生成：绘制最终版...");
+    console.log("本地生成：绘制步长15版...");
     let bgSrc = "";
     if (typeof tmp_bgimg_osrc !== 'undefined' && tmp_bgimg_osrc) bgSrc = tmp_bgimg_osrc;
     else if (typeof use_default_bg !== 'undefined' && use_default_bg) bgSrc = default_bgSRC[1];
