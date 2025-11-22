@@ -268,50 +268,97 @@
     <script src="js/drawMine.js" defer></script>
     <script src="js/onload.js" defer></script>
 
-    <!-- 🌟 自动修复脚本：截图时移除特效，截图后恢复 -->
     <script>
-        window.addEventListener('load', function() {
-            // 确保原始函数存在
-            if (typeof window.Download === 'function') {
-                const originalDownload = window.Download;
+    /**
+     * 核心思路：克隆节点 -> 放入隐藏容器 -> 去除特效 -> 生成图片 -> 销毁容器
+     */
+    window.Download = function(fileNameFunc) {
+        // 1. 获取原始的 DOM 节点
+        const originalNode = document.getElementById('new-Img');
+        if (!originalNode) {
+            alert("未找到要生成的元素");
+            return;
+        }
 
-                // 劫持 Download 函数
-                window.Download = function(arg) {
-                    const targetNode = document.getElementById('new-Img');
+        // 2. 创建一个隐藏的容器 (Ghost Container)
+        // 这个容器用来放置我们的“克隆体”，位置在屏幕可视区域之外
+        const ghostContainer = document.createElement('div');
+        ghostContainer.style.position = 'absolute';
+        ghostContainer.style.top = '-9999px'; // 移出屏幕
+        ghostContainer.style.left = '-9999px';
+        ghostContainer.style.zIndex = '-1';
+        // 强制设置容器宽度，确保生成的图片是标准的手机宽度 (例如 1080px 或原始宽度)
+        // 如果这里不设宽度，可能会因为屏幕宽度不同导致换行错乱
+        ghostContainer.style.width = originalNode.offsetWidth + 'px'; 
+        
+        document.body.appendChild(ghostContainer);
 
-                    // 1. 保存当前样式
-                    const originalTransform = targetNode.style.transform;
-                    const originalBoxShadow = targetNode.style.boxShadow;
-                    const originalMargin = targetNode.style.margin;
-
-                    // 2. 强制移除干扰截图的 CSS 属性
-                    // transform: scale() 会导致 html2canvas 坐标计算错误
-                    targetNode.style.transform = 'none';
-                    // 复杂的 box-shadow 会导致渲染极慢
-                    targetNode.style.boxShadow = 'none';
-                    // margin 可能会导致偏移
-                    targetNode.style.margin = '0';
-
-                    // 3. 稍微延迟调用截图，确保浏览器应用了去特效的样式
-                    setTimeout(() => {
-                        try {
-                            originalDownload(arg);
-                        } catch (e) {
-                            console.error("截图过程出错:", e);
-                        } finally {
-                            // 4. 截图指令发出后，延迟恢复样式
-                            // 延迟 500ms 足够让 html2canvas 完成 DOM 克隆
-                            setTimeout(() => {
-                                targetNode.style.transform = originalTransform;
-                                targetNode.style.boxShadow = originalBoxShadow;
-                                targetNode.style.margin = originalMargin;
-                            }, 500);
-                        }
-                    }, 50);
-                };
-                console.log("Safe-Mode Download Activated.");
+        // 3. 深度克隆节点
+        const clonedNode = originalNode.cloneNode(true);
+        
+        // 【重要】Canvas 元素特殊处理
+        // cloneNode 无法克隆 canvas 的内容，必须手动把原图画过去
+        // 如果你的轨迹图是用 canvas 画的，这一步必不可少
+        const originalCanvases = originalNode.querySelectorAll('canvas');
+        const clonedCanvases = clonedNode.querySelectorAll('canvas');
+        originalCanvases.forEach((orig, index) => {
+            if (clonedCanvases[index]) {
+                const destCtx = clonedCanvases[index].getContext('2d');
+                destCtx.drawImage(orig, 0, 0);
             }
         });
-    </script>
+
+        // 4. 清洗克隆体的样式 (只改克隆体，不改原界面！)
+        // 移除缩放、阴影、边距，确保是平整的一张图
+        clonedNode.style.transform = 'none';
+        clonedNode.style.boxShadow = 'none';
+        clonedNode.style.margin = '0';
+        clonedNode.style.borderRadius = '0'; // 如果需要直角边
+        // 确保背景是透明或原来的颜色
+        clonedNode.style.background = getComputedStyle(originalNode).background;
+
+        // 将克隆体加入隐藏容器
+        ghostContainer.appendChild(clonedNode);
+
+        // 5. 使用 html2canvas 对“克隆体”进行渲染
+        const options = {
+            scale: 2, // 2倍清晰度
+            useCORS: true, // 允许跨域图片
+            backgroundColor: null, // 保持透明背景
+            logging: false // 关闭日志
+        };
+
+        // 如果你需要根据不同的按钮下载不同的名字，可以在这里处理 fileNameFunc
+        // 这里假设 fileNameFunc 只是一个标识
+        
+        html2canvas(clonedNode, options).then(canvas => {
+            // 6. 生成图片数据
+            const imgData = canvas.toDataURL('image/png');
+            
+            // 7. 触发下载
+            const link = document.createElement('a');
+            link.href = imgData;
+            
+            // 生成文件名 (这里简单模拟了你原本的逻辑)
+            const dateStr = new Date().toISOString().slice(0,10).replace(/-/g,"");
+            link.download = "HEU_Run_" + dateStr + ".png";
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // 8. 清理案发现场 (删除隐藏容器)
+            document.body.removeChild(ghostContainer);
+            console.log("高清图片生成完毕");
+        }).catch(err => {
+            console.error("生成失败:", err);
+            alert("图片生成失败，请重试");
+            // 出错也要清理
+            if(document.body.contains(ghostContainer)) {
+                document.body.removeChild(ghostContainer);
+            }
+        });
+    };
+</script>
 </body>
 </html>
