@@ -267,5 +267,44 @@
     <script src="js/localTrackGen.js"></script>
     <script src="js/drawMine.js" defer></script>
     <script src="js/onload.js" defer></script>
+    <script>
+    // 劫持原有的 Download 函数
+    const originalDownload = window.Download;
+    
+    window.Download = function(type) {
+        const targetNode = document.getElementById('new-Img');
+        
+        // 1. 截图前：临时移除 transform 和复杂的 box-shadow
+        const originalTransform = targetNode.style.transform;
+        const originalBoxShadow = targetNode.style.boxShadow;
+        const originalMargin = targetNode.style.margin;
+        
+        // 强制重置样式以配合 html2canvas
+        targetNode.style.transform = 'none';
+        targetNode.style.boxShadow = 'none'; 
+        targetNode.style.margin = '0';
+        
+        // 2. 调用原有的下载函数
+        // 注意：因为 html2canvas 是异步的，简单的恢复样式可能会太快
+        // 这里我们使用 setTimeout 稍微延迟一下样式恢复，或者直接依赖 html2canvas 的 promise (如果你能改动 download_img.js 最好)
+        
+        // 为了保险起见，我们直接执行下载逻辑，但因为无法侵入原有逻辑的内部回调
+        // 这里只是一个权宜之计：先去样式 -> 执行 -> 延时恢复
+        
+        try {
+            originalDownload(type);
+        } catch (e) {
+            console.error(e);
+            alert("生成图片失败，请检查控制台");
+        }
+
+        // 3. 截图后：恢复样式 (延时 1000ms 确保截图动作已开始)
+        setTimeout(() => {
+            targetNode.style.transform = originalTransform;
+            targetNode.style.boxShadow = originalBoxShadow;
+            targetNode.style.margin = originalMargin;
+        }, 1000);
+    };
+</script>
 </body>
 </html>
