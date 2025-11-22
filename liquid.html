@@ -244,23 +244,18 @@
     <script src="js/drawMine.js" defer></script>
     <script src="js/onload.js" defer></script>
 
-    <!-- 🌟 脚本调整：增加宽度的“余量” -->
+    <!-- 🌟 脚本更新：修复天气API不触发宽度更新的问题 -->
     <script>
-        // 调整单个输入框宽度
         function adjustInputWidth(elem) {
             let canvas = adjustInputWidth.canvas || (adjustInputWidth.canvas = document.createElement("canvas"));
             let context = canvas.getContext("2d");
             let style = window.getComputedStyle(elem);
             context.font = style.font;
-            
             let text = elem.value || elem.placeholder || "";
             let metrics = context.measureText(text);
             
-            // 【关键修改】: 
-            // 之前是 +24 (稍微紧凑)
-            // 现在改为 +35 (宽敞松弛)
+            // 宽松宽度计算 (+35px 余量)
             let finalWidth = Math.ceil(metrics.width) + 35; 
-            
             elem.style.width = finalWidth + "px";
         }
 
@@ -274,9 +269,35 @@
             });
         }
 
+        // 【关键修复】专门监听天气输入框的赋值操作
+        function fixWeatherApiWidth() {
+            const targetIds = ['inpt_temperature', 'inpt_humidity'];
+            targetIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    // 拦截 value 属性的 setter
+                    const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+                    Object.defineProperty(el, 'value', {
+                        get: function() {
+                            return descriptor.get.call(this);
+                        },
+                        set: function(v) {
+                            descriptor.set.call(this, v);
+                            // 一旦被 JS 赋值，立即刷新宽度
+                            adjustInputWidth(this); 
+                        }
+                    });
+                }
+            });
+        }
+
         window.addEventListener('load', function() {
+            // 先拦截天气API
+            fixWeatherApiWidth();
+            // 再初始化通用宽度
             initAutoWidth();
-            console.log("Liquid UI: Spaced-out auto-width initialized.");
+            
+            console.log("Liquid UI: Weather API monitoring & Auto-width initialized.");
 
             window.Download = function(fileNameArg) {
                 const targetNode = document.getElementById('new-Img');
