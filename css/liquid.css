@@ -1,39 +1,38 @@
 /* =========================================
-   Liquid Glass System - Design Tokens
+   1. Design Tokens (配色与参数)
    ========================================= */
 :root {
-    /* --- 浅色模式 (Light Mode) --- */
+    /* --- 浅色模式 (Light) --- */
     --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
     
-    /* 玻璃基底 */
-    --glass-bg: rgba(255, 255, 255, 0.35);
-    --glass-border: rgba(255, 255, 255, 0.6);
+    /* 玻璃材质 - 更透 */
+    --glass-bg: rgba(255, 255, 255, 0.25);
+    --glass-border: rgba(255, 255, 255, 0.5);
     --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.3);
     --glass-blur: 30px;
     
     /* 文字 */
     --text-main: #1d1d1f;
     --text-sub: #5c5c63;
-    --text-btn-secondary: #333;
     
-    /* 输入框 & 按钮 */
-    --input-bg: rgba(255, 255, 255, 0.4);
-    --input-bg-hover: rgba(255, 255, 255, 0.6);
-    --input-border: rgba(255, 255, 255, 0.5);
+    /* 输入框 & 按钮 - 极简透明 */
+    --input-bg: rgba(255, 255, 255, 0.2);
+    --input-bg-hover: rgba(255, 255, 255, 0.4);
+    --input-border: rgba(255, 255, 255, 0.3);
     
     /* 按钮背景 */
-    --btn-secondary-bg: rgba(255, 255, 255, 0.5);
-    --btn-backup-bg: rgba(255, 255, 255, 0.25);
+    --btn-bg: rgba(255, 255, 255, 0.3);
+    --btn-bg-hover: rgba(255, 255, 255, 0.6);
     
-    /* 装饰球颜色 */
+    /* 装饰球 */
     --orb-1: #85ffbd;
     --orb-2: #fffb7d;
 
-    /* 通用参数 */
+    /* 通用 */
     --primary: #007AFF;
     --danger: #ff3b30;
     --radius-panel: 32px;
-    --radius-elem: 16px;
+    --radius-elem: 14px; /* 统一所有圆角 */
 }
 
 /* --- 深色模式 (Dark Mode) --- */
@@ -42,37 +41,36 @@
         --bg-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
         
         /* 深色玻璃 */
-        --glass-bg: rgba(0, 0, 0, 0.4);
+        --glass-bg: rgba(0, 0, 0, 0.3);
         --glass-border: rgba(255, 255, 255, 0.1);
-        --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+        --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
         
         /* 文字 */
         --text-main: #f5f5f7;
         --text-sub: #a1a1a6;
-        --text-btn-secondary: #e5e5e5;
         
         /* 输入框 & 按钮 - 增加通透感 */
         --input-bg: rgba(255, 255, 255, 0.08);
-        --input-bg-hover: rgba(255, 255, 255, 0.12);
+        --input-bg-hover: rgba(255, 255, 255, 0.15);
         --input-border: rgba(255, 255, 255, 0.08);
         
-        /* 按钮背景 */
-        --btn-secondary-bg: rgba(255, 255, 255, 0.1);
-        --btn-backup-bg: rgba(255, 255, 255, 0.05);
+        --btn-bg: rgba(255, 255, 255, 0.1);
+        --btn-bg-hover: rgba(255, 255, 255, 0.2);
         
-        /* 装饰球颜色 */
+        /* 装饰球 (变暗) */
         --orb-1: #432b58;
         --orb-2: #1e3c72;
     }
 }
 
 /* =========================================
-   Global Reset & Layout
+   2. Global Reset
    ========================================= */
 * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
 body {
     margin: 0; padding: 0;
+    /* 字体优化：不再使用 monospace，解决数字丑的问题 */
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: #111;
     color: var(--text-main);
@@ -82,9 +80,8 @@ body {
     transition: color 0.3s ease;
 }
 
-/* 动态背景 */
+/* 背景光斑 */
 .liquid-bg-gradient { position: fixed; inset: 0; z-index: -2; background: var(--bg-gradient); transition: background 0.5s ease; }
-
 .liquid-orb {
     position: fixed; border-radius: 50%; filter: blur(90px); z-index: -1; opacity: 0.7;
     animation: float 15s infinite ease-in-out alternate;
@@ -92,30 +89,31 @@ body {
 }
 .orb-1 { width: 60vw; height: 60vw; background: var(--orb-1); top: -20%; left: -20%; }
 .orb-2 { width: 50vw; height: 50vw; background: var(--orb-2); bottom: -10%; right: -10%; animation-delay: -5s; }
-
 @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, 50px); } }
 
 @font-face { font-family: 'keeprun'; src: url(../DINCond-Bold.otf); }
 
-/* 布局 */
+/* 主布局 */
 #main-div {
     display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start;
     gap: 50px; padding: 60px 20px; max-width: 1280px; margin: 0 auto;
 }
 
 /* =========================================
-   Left: Phone Preview
+   3. 左侧预览 (修复截图bug)
    ========================================= */
 .new-img {
     position: relative; width: 360px; height: 719px; background: #fff;
     border-radius: 50px;
+    /* 纯净的阴影，移除 transform 以修复 html2canvas */
     box-shadow: 0 0 0 12px #1a1a1a, 0 50px 100px -20px rgba(0,0,0,0.4);
-    overflow: hidden; flex-shrink: 0; transform: translateZ(0); user-select: none;
+    overflow: hidden; flex-shrink: 0; user-select: none;
 }
 @media (prefers-color-scheme: dark) {
     .new-img { box-shadow: 0 0 0 12px #000, 0 50px 100px -20px rgba(0,0,0,0.6); }
 }
 
+/* 内部元素 (保持原样) */
 .new-img img { display: block; }
 .new-img #gui-img, .new-img .bgimgwrap, .new-img .innerbgimg { position: absolute; top: 0; left: 0; width: 360px; height: 719px; }
 .new-img .bgimgwrap { display: flex; justify-content: center; align-items: center; background: #333; }
@@ -124,7 +122,7 @@ body {
 .new-img .weather-imgwrap { position: absolute; top: 426.5px; left: 238px; width: 14px; height: 14px; z-index: 2; }
 .new-img .weather { width: 100%; height: 100%; }
 
-/* 文字 */
+/* 预览区文字 */
 .username { position: absolute; top: 385px; right: 34px; font-size: 13px; color: #333; font-family: "Microsoft YaHei", sans-serif; font-weight: bold; }
 .keep-title { position: absolute; top: 361px; left: 30px; font-size: 12px; color: #a2a2a2; font-family: sans-serif; }
 .mile { position: absolute; top: 387px; left: 32px; font-family: 'keeprun', sans-serif !important; color: #57525d; }
@@ -137,7 +135,7 @@ body {
 .speed { left: 32px; letter-spacing: -0.5px; } .cost-time { left: 140px; letter-spacing: -0.5px; } .calorie { right: 32px; }
 
 /* =========================================
-   Right: Control Panel
+   4. 右侧控制面板 (高通透 & 统一)
    ========================================= */
 .set-data { flex: 1; min-width: 320px; max-width: 500px; display: flex; flex-direction: column; gap: 24px; }
 
@@ -152,64 +150,81 @@ body {
     overflow: hidden;
     transition: background-color 0.3s ease;
 }
-
 .glass-card { padding: 28px; }
 
-/* --- Top Buttons --- */
+/* --- 顶部按钮布局 (修复乱位) --- */
 .export-panel { padding: 20px; margin-bottom: 20px; }
-.export-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
-
-button {
-    cursor: pointer; border: none; padding: 0; 
-    border-radius: var(--radius-elem);
-    font-weight: 600; transition: all 0.2s ease;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    width: 100%;
-    /* 关键修复：防止按钮内文字换行 */
-    white-space: nowrap; 
-    flex-shrink: 0;
+.export-grid { 
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; 
 }
 
+button {
+    cursor: pointer; border: none; padding: 0 16px;
+    border-radius: var(--radius-elem); /* 统一圆角 */
+    font-weight: 600; transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    height: 44px; /* 统一高度 */
+    white-space: nowrap; /* 强制不换行！ */
+    flex-shrink: 0; /* 禁止被挤压 */
+}
+
+/* 主保存按钮 */
 .main-save {
-    background: var(--text-main); color: #fff; height: 52px; font-size: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    background: var(--text-main); color: #fff; 
+    height: 50px; font-size: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 @media (prefers-color-scheme: dark) { .main-save { color: #000; } }
 .main-save:hover { transform: scale(1.02); opacity: 0.95; }
 
+/* 预览按钮 */
 .main-preview {
-    background: var(--btn-secondary-bg); color: var(--text-btn-secondary);
-    border: 1px solid var(--glass-border); height: 52px; font-size: 15px;
+    background: var(--btn-bg); border: 1px solid var(--input-border); 
+    color: var(--text-main); height: 50px; font-size: 15px;
 }
-.main-preview:hover { background: var(--input-bg-hover); }
+.main-preview:hover { background: var(--btn-bg-hover); }
 
+/* 备用按钮 */
 .backup-btn {
-    background: var(--btn-backup-bg); color: var(--text-sub);
-    border: 1px solid var(--glass-border); height: 36px; font-size: 12px; font-weight: 500;
+    background: rgba(255,255,255,0.15); border: 1px solid var(--input-border);
+    color: var(--text-sub); height: 36px; font-size: 12px;
 }
-.backup-btn:hover { background: var(--input-bg-hover); color: var(--text-main); }
+.backup-btn:hover { background: var(--btn-bg-hover); color: var(--text-main); }
 
 /* =========================================
-   Form Inputs
+   5. 表单控件 (统一风格)
    ========================================= */
 .divider { height: 1px; background: var(--input-border); margin: 24px -28px; opacity: 0.3; }
 .input-group { margin-bottom: 24px; }
-.group-title { font-size: 12px; letter-spacing: 1px; color: var(--text-sub); margin-bottom: 14px; font-weight: 700; opacity: 0.8; }
+.group-title { font-size: 12px; letter-spacing: 1px; color: var(--text-sub); margin-bottom: 12px; font-weight: 700; opacity: 0.8; }
 
-li { display: flex; align-items: center; margin-bottom: 14px; flex-wrap: nowrap; /* 强制不换行 */ }
-label { flex: 0 0 70px; font-size: 14px; color: var(--text-main); font-weight: 500; margin-right: 8px; opacity: 0.9; white-space: nowrap; }
+li { 
+    display: flex; align-items: center; margin-bottom: 14px; 
+    flex-wrap: nowrap; /* 关键：防止按钮被换行 */
+    gap: 8px;
+}
+label { flex: 0 0 70px; font-size: 14px; color: var(--text-main); font-weight: 500; opacity: 0.9; white-space: nowrap; }
 
-/* 输入框 */
+/* 统一输入框 */
 input[type="text"], select {
-    height: 40px; padding: 0 12px;
-    border-radius: var(--radius-elem);
+    height: 38px; padding: 0 12px;
+    border-radius: var(--radius-elem); /* 统一圆角 */
     border: 1px solid var(--input-border);
-    background: var(--input-bg);
+    background: var(--input-bg); /* 更透 */
     color: var(--text-main);
-    font-family: inherit; font-variant-numeric: tabular-nums; font-size: 14px;
+    
+    /* 解决“字体丑”：使用系统字体，且数字等宽 */
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    
     transition: all 0.2s;
-    /* 自动宽度配置 */
+    /* 自动宽度 */
     width: auto; field-sizing: content; min-width: 60px; max-width: 100%;
+}
+
+/* 解决之前那个丑陋的 mono 字体 */
+.font-mono { 
+    font-family: inherit; font-weight: 500; letter-spacing: 0;
 }
 
 input[type="text"]:focus, select:focus {
@@ -218,68 +233,45 @@ input[type="text"]:focus, select:focus {
     box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
 }
 
-.font-mono { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, sans-serif; font-weight: 500; }
-
-/* 带前缀的输入框 */
+/* 组合框 */
 .input-with-prefix {
     display: inline-flex; align-items: center; 
-    background: var(--input-bg);
-    border: 1px solid var(--input-border);
-    border-radius: var(--radius-elem); 
-    padding-left: 12px;
-    height: 40px;
-    width: fit-content; /* 关键：适应内容 */
-    max-width: 100%;
-    transition: background 0.2s;
+    background: var(--input-bg); border: 1px solid var(--input-border);
+    border-radius: var(--radius-elem); padding-left: 12px; height: 38px;
+    width: fit-content; max-width: 100%;
 }
 .input-with-prefix input { background: transparent; border: none; box-shadow: none; padding-left: 4px; height: 100%; min-width: 80px; }
-.input-with-prefix:focus-within { background: var(--input-bg-hover); border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15); }
+.input-with-prefix:focus-within { background: var(--input-bg-hover); border-color: var(--primary); }
 .prefix { font-size: 13px; color: var(--text-sub); white-space: nowrap; }
 
-/* --- 修复布局的关键类 --- */
-
-/* 上传行布局修复 */
-.file-action-row {
-    display: flex; gap: 8px; align-items: center;
-    width: 100%; /* 占满剩余空间 */
-    justify-content: flex-start;
-}
-
-/* 小按钮样式 (上传、重置、随机) */
+/* 小按钮 (上传、重置) */
 .btn-small {
-    height: 32px; font-size: 12px; padding: 0 14px; /* 增加水平内边距 */
-    background: var(--btn-secondary-bg);
-    border: 1px solid var(--input-border); color: var(--text-main);
-    border-radius: 8px;
-    width: auto; /* 覆盖默认撑满 */
-    min-width: auto;
+    height: 32px; font-size: 12px; padding: 0 14px;
+    background: var(--btn-bg); border: 1px solid var(--input-border); 
+    color: var(--text-main); border-radius: 8px; width: auto;
 }
-.btn-small:hover { background: var(--input-bg-hover); }
+.btn-small:hover { background: var(--btn-bg-hover); }
 
-/* 文字按钮样式 (恢复默认、重置配置) */
 .btn-text {
-    background: transparent; color: var(--text-sub);
-    height: 32px; padding: 0 10px; font-size: 13px;
-    width: auto;
-    border-radius: 8px;
+    background: transparent; color: var(--text-sub); height: 32px; padding: 0 10px; font-size: 13px;
 }
-.btn-text:hover { color: var(--text-main); background: rgba(255,255,255,0.1); }
+.btn-text:hover { color: var(--text-main); background: rgba(255,255,255,0.1); border-radius: 8px; }
 
-/* Flex Group (用于轨迹样式行的 select + 按钮) */
+/* Flex Group (修复样式选择行) */
 .flex-group {
     display: flex; gap: 8px; align-items: center; flex: 1;
-    flex-wrap: nowrap; /* 关键：防止按钮换行 */
+    flex-wrap: nowrap; /* 关键 */
+    overflow: hidden;
 }
-/* 让 Select 占满剩余空间，按钮自适应 */
-.flex-group select { flex: 1; }
-.flex-group button { flex: 0 0 auto; width: auto; }
+.flex-group select { flex: 1; min-width: 0; } /* select 自适应 */
+.flex-group button { flex: 0 0 auto; }
 
 /* 范围输入容器 */
 .sub-setting {
     display: inline-flex; align-items: center;
     background: transparent; border-left: 2px solid var(--input-border);
     padding: 4px 0 4px 12px; margin-left: 78px; margin-bottom: 12px;
-    font-size: 12px; flex-wrap: wrap; gap: 6px;
+    font-size: 12px; gap: 6px;
 }
 .sub-label { color: var(--text-sub); }
 .mini-input {
@@ -289,8 +281,7 @@ input[type="text"]:focus, select:focus {
 }
 .dash { color: var(--text-sub); margin: 0 2px; }
 
-/* 时间 */
-.datetime-row { display: flex; align-items: center; gap: 4px; font-size: 13px; color: var(--text-sub); flex-wrap: wrap; }
+.datetime-row { display: flex; align-items: center; gap: 4px; font-size: 13px; color: var(--text-sub); flex-wrap: nowrap; }
 .year-inp, .date-inp, .time-inp { 
     min-width: 38px !important; text-align: center; padding: 0 2px !important; flex: 0 1 auto; 
     height: 32px !important; border-radius: 8px !important; background: var(--input-bg) !important;
@@ -298,7 +289,6 @@ input[type="text"]:focus, select:focus {
 .year-inp { min-width: 52px !important; }
 .spacer { width: 8px; }
 
-/* 温湿度 */
 .dual-input { display: flex; align-items: center; gap: 10px; }
 .dual-input input { min-width: 50px; text-align: center; }
 .unit { font-size: 12px; color: var(--text-sub); }
@@ -322,14 +312,18 @@ input[type="checkbox"]::after {
 input[type="checkbox"]:checked { background: #34C759; }
 input[type="checkbox"]:checked::after { transform: translateX(18px); }
 
+/* 底部重置 */
 .system-actions { display: flex; justify-content: space-between; align-items: center; padding-top: 5px; }
 .btn-danger-text { color: var(--danger); }
-.btn-danger-text:hover { background: rgba(255, 59, 48, 0.1); }
+.btn-danger-text:hover { background: rgba(255, 59, 48, 0.1); border-radius: 8px; }
+
+/* 上传行 */
+.file-action-row { display: flex; gap: 8px; align-items: center; width: 100%; }
 
 @media (max-width: 800px) {
     #main-div { flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
     .new-img { transform: scale(0.9); margin-bottom: -40px; }
     .set-data { width: 100%; max-width: 100%; }
     .sub-setting, .switch-row { margin-left: 0; border-left: none; padding-left: 0; }
-    li { flex-wrap: wrap; } /* 移动端允许换行 */
+    li { flex-wrap: wrap; } 
 }
