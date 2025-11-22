@@ -244,60 +244,44 @@
     <script src="js/drawMine.js" defer></script>
     <script src="js/onload.js" defer></script>
 
-    <!-- 🌟 终极脚本：全平台自动宽度 + 离屏渲染 -->
+    <!-- 🌟 脚本调整：增加宽度的“余量” -->
     <script>
-        // =========================================
-        // 1. 输入框自动宽度逻辑 (JS 接管)
-        // =========================================
-        
         // 调整单个输入框宽度
         function adjustInputWidth(elem) {
-            // 创建或复用 Canvas
             let canvas = adjustInputWidth.canvas || (adjustInputWidth.canvas = document.createElement("canvas"));
             let context = canvas.getContext("2d");
-            
-            // 获取样式
             let style = window.getComputedStyle(elem);
             context.font = style.font;
             
-            // 计算文字宽度 (包含 placeholder)
             let text = elem.value || elem.placeholder || "";
             let metrics = context.measureText(text);
             
-            // 计算最终宽度：文字宽 + 左右 Padding (20px) + 微小余量 (4px)
-            let finalWidth = Math.ceil(metrics.width) + 24; 
+            // 【关键修改】: 
+            // 之前是 +24 (稍微紧凑)
+            // 现在改为 +35 (宽敞松弛)
+            let finalWidth = Math.ceil(metrics.width) + 35; 
             
-            // 赋值
             elem.style.width = finalWidth + "px";
         }
 
-        // 初始化所有输入框
         function initAutoWidth() {
             const allInputs = document.querySelectorAll('input[type="text"]');
             allInputs.forEach(input => {
-                // 立即计算一次
                 adjustInputWidth(input);
-                // 监听打字输入
                 input.addEventListener('input', function() {
                     adjustInputWidth(this);
                 });
             });
         }
 
-        // =========================================
-        // 2. 页面加载与下载逻辑
-        // =========================================
         window.addEventListener('load', function() {
-            // 启动自动宽度
             initAutoWidth();
-            console.log("Liquid UI: Full auto-width initialized.");
+            console.log("Liquid UI: Spaced-out auto-width initialized.");
 
-            // 离屏下载逻辑 (Ghost Renderer)
             window.Download = function(fileNameArg) {
                 const targetNode = document.getElementById('new-Img');
                 if (!targetNode) return;
 
-                // 创建幽灵容器
                 const ghostWrapper = document.createElement('div');
                 ghostWrapper.style.position = 'fixed';
                 ghostWrapper.style.top = '-9999px';
@@ -306,7 +290,6 @@
                 ghostWrapper.style.width = targetNode.offsetWidth + 'px';
                 document.body.appendChild(ghostWrapper);
 
-                // 克隆节点
                 const clonedNode = targetNode.cloneNode(true);
                 const originalCanvases = targetNode.querySelectorAll('canvas');
                 const clonedCanvases = clonedNode.querySelectorAll('canvas');
@@ -319,7 +302,6 @@
                     }
                 });
 
-                // 净化样式
                 clonedNode.style.transform = 'none';
                 clonedNode.style.boxShadow = 'none';
                 clonedNode.style.margin = '0';
@@ -335,7 +317,6 @@
                 }
                 if (!fileName.endsWith('.png')) fileName += '.png';
 
-                // 渲染
                 html2canvas(clonedNode, {
                     scale: 2,
                     useCORS: true,
