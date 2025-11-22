@@ -7,7 +7,7 @@
     /* --- 浅色模式 (Light) --- */
     --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
     
-    /* 玻璃材质 - 更透 */
+    /* 玻璃材质 */
     --glass-bg: rgba(255, 255, 255, 0.25);
     --glass-border: rgba(255, 255, 255, 0.5);
     --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.3);
@@ -122,7 +122,7 @@ body {
 .speed { left: 32px; letter-spacing: -0.5px; } .cost-time { left: 140px; letter-spacing: -0.5px; } .calorie { right: 32px; }
 
 /* =========================================
-   4. 右侧控制面板 (高通透 & 统一)
+   4. 右侧控制面板
    ========================================= */
 .set-data { flex: 1; min-width: 320px; max-width: 500px; display: flex; flex-direction: column; gap: 24px; }
 
@@ -160,7 +160,7 @@ button {
 .backup-btn:hover { background: var(--btn-bg-hover); color: var(--text-main); }
 
 /* =========================================
-   5. 表单控件 (全平台自适应核心 CSS)
+   5. 表单控件 (宽敞舒适版)
    ========================================= */
 .divider { height: 1px; background: var(--input-border); margin: 24px -28px; opacity: 0.3; }
 .input-group { margin-bottom: 24px; }
@@ -169,13 +169,10 @@ button {
 li { display: flex; align-items: center; margin-bottom: 14px; flex-wrap: nowrap; gap: 8px; }
 label { flex: 0 0 70px; font-size: 14px; color: var(--text-main); font-weight: 500; opacity: 0.9; white-space: nowrap; }
 
-/* 
-   核心修复：针对所有文本输入框 
-   移除 field-sizing，使用 JS 控制宽度 
-*/
+/* 核心修改区域 */
 input[type="text"], select {
     height: 38px;
-    padding: 0 10px; /* 内容内边距 */
+    padding: 0 12px; /* 内容边距增加 */
     border-radius: var(--radius-elem);
     border: 1px solid var(--input-border);
     background: var(--input-bg);
@@ -186,17 +183,14 @@ input[type="text"], select {
     font-variant-numeric: tabular-nums;
     font-size: 14px;
     
-    /* 核心自适应配置 */
-    width: 40px;       /* 默认给个小宽度，防止 iOS 撑满 */
-    min-width: 30px;   /* 最小宽度 */
-    max-width: 60vw;   /* 最大宽度，防止溢出屏幕 */
-    flex-shrink: 1;    /* 允许收缩 */
-    text-align: center;/* 文字居中 */
+    /* 核心自适应配置 - 宽敞版 */
+    width: 60px;       /* 初始宽度变大 */
+    min-width: 45px;   /* 【关键】最小宽度增加，单字也不会太窄 */
+    max-width: 60vw;   
+    flex-shrink: 1;
+    text-align: center;
     
-    /* 平滑过渡宽度 */
     transition: width 0.1s ease, background 0.2s, border-color 0.2s;
-    
-    /* 移除 iOS 默认样式 */
     -webkit-appearance: none;
 }
 
@@ -206,7 +200,6 @@ input[type="text"]:focus, select:focus {
     box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
 }
 
-/* 选择框不需要居中，且需要箭头 */
 select {
     text-align: left;
     width: auto;
@@ -218,7 +211,6 @@ select {
     background-size: 12px;
 }
 
-/* 组合框容器 */
 .input-with-prefix {
     display: inline-flex; 
     align-items: center; 
@@ -227,7 +219,7 @@ select {
     border-radius: var(--radius-elem); 
     padding-left: 12px; 
     height: 38px;
-    width: auto; /* 自适应 */
+    width: auto;
     max-width: 100%;
 }
 .input-with-prefix:focus-within { background: var(--input-bg-hover); border-color: var(--primary); }
@@ -237,22 +229,21 @@ select {
     box-shadow: none !important; 
     padding-left: 4px !important; 
     height: 100%; 
-    text-align: left !important; /* 标题靠左比较好看 */
+    text-align: left !important;
+    /* 这里 min-width 可以小一点，因为外层有容器 */
+    min-width: 20px !important; 
 }
 .prefix { font-size: 13px; color: var(--text-sub); white-space: nowrap; }
 
-/* 按钮 */
 .btn-small { height: 32px; font-size: 12px; padding: 0 14px; background: var(--btn-bg); border: 1px solid var(--input-border); color: var(--text-main); border-radius: 8px; width: auto; }
 .btn-small:hover { background: var(--btn-bg-hover); }
 .btn-text { background: transparent; color: var(--text-sub); height: 32px; padding: 0 10px; font-size: 13px; }
 .btn-text:hover { color: var(--text-main); background: rgba(255,255,255,0.1); border-radius: 8px; }
 
-/* 布局组 */
 .flex-group { display: flex; gap: 8px; align-items: center; flex: 1; flex-wrap: nowrap; overflow: hidden; }
 .flex-group select { flex: 1; min-width: 0; }
 .flex-group button { flex: 0 0 auto; }
 
-/* 范围输入容器 */
 .sub-setting {
     display: inline-flex; align-items: center;
     background: transparent; border-left: 2px solid var(--input-border);
@@ -262,14 +253,11 @@ select {
 .sub-label { color: var(--text-sub); white-space: nowrap; }
 .dash { color: var(--text-sub); margin: 0 2px; }
 
-/* 日期时间行：移除固定宽度，依靠 JS */
 .datetime-row { display: flex; align-items: center; gap: 4px; font-size: 13px; color: var(--text-sub); flex-wrap: nowrap; }
 .spacer { width: 8px; }
-
 .dual-input { display: flex; align-items: center; gap: 10px; }
 .unit { font-size: 12px; color: var(--text-sub); white-space: nowrap; }
 
-/* 开关 */
 .switch-row { margin-left: 78px; display: flex; gap: 24px; margin-bottom: 12px; }
 .switch-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-main); }
 
@@ -277,7 +265,7 @@ input[type="checkbox"] {
     appearance: none; -webkit-appearance: none; width: 40px; height: 22px; border-radius: 11px;
     background: var(--input-border); position: relative; cursor: pointer;
     transition: background 0.3s; border: none; flex-shrink: 0;
-    min-width: 40px !important; width: 40px !important; /* 复选框必须固定 */
+    min-width: 40px !important; width: 40px !important;
 }
 input[type="checkbox"]::after {
     content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
