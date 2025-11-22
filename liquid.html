@@ -21,66 +21,70 @@
     <link rel="stylesheet" href="./css/liquid.css">
     <link rel="preload" href="./DINCond-Bold.otf" as="font" type="font/otf" crossorigin>
 
-    <!-- 🌟 针对 iOS 的 Liquid Glass 样式补丁 -->
     <style>
-        /* 1. 核心：只重置 文本输入框、下拉框、文本域 */
-        /* 绝对排除了 checkbox，保护你的绿色开关 */
+        /* =========================================
+           1. 基础玻璃质感 (针对普通输入框)
+           绝对排除 checkbox，保留原生绿色开关
+           ========================================= */
         input:not([type="checkbox"]):not([type="range"]), 
         select, 
         textarea {
-            -webkit-appearance: none !important; /* 去除 iOS 默认的圆角白底样式 */
+            -webkit-appearance: none !important;
             appearance: none !important;
             outline: none !important;
-            
-            /* 2. Liquid Glass 风格注入 */
-            background-color: rgba(255, 255, 255, 0.1) !important; /* 淡淡的玻璃底色 */
-            border: 1px solid rgba(255, 255, 255, 0.2) !important; /* 细致的白边框 */
-            border-radius: 8px !important; /* 统一圆角 */
-            color: #fff !important; /* 强制文字白色 */
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 8px !important;
+            color: #fff !important;
             padding: 6px 10px !important;
-            box-shadow: none !important;
             font-family: inherit;
         }
 
-        /* 3. 修复 Placeholder (提示文字) 颜色 */
-        ::placeholder { color: rgba(255, 255, 255, 0.4) !important; }
-        ::-webkit-input-placeholder { color: rgba(255, 255, 255, 0.4) !important; }
+        /* =========================================
+           2. 重点修复：标题栏 (Keep • ...)
+           解决 "框中框" 和 "宽度自适应" 问题
+           ========================================= */
+        
+        /* 外层容器：负责显示玻璃背景和边框 */
+        .input-with-prefix {
+            display: inline-flex; /* 关键：允许容器随内容伸缩 */
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 8px !important;
+            padding: 6px 12px !important;
+            width: auto !important;  /* 宽度自动 */
+            min-width: 150px;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
 
-        /* 4. 专门修复下拉菜单箭头消失的问题 */
+        /* 内层输入框：去掉所有样式，变成透明，只负责显示文字 */
+        #inpt_keep_title {
+            background: transparent !important; /* 透明背景 */
+            border: none !important;            /* 无边框 */
+            box-shadow: none !important;
+            padding: 0 0 0 4px !important;      /* 左边稍微留点空隙 */
+            margin: 0 !important;
+            width: 120px; /* 初始宽度，会被 JS 覆盖 */
+            min-width: 50px;
+            color: #fff !important;
+        }
+
+        /* =========================================
+           3. 其他细节修复
+           ========================================= */
+        ::placeholder { color: rgba(255, 255, 255, 0.4) !important; }
+        
         select {
-            /* 画一个白色的小箭头 */
             background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.7)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") !important;
             background-repeat: no-repeat !important;
             background-position: right 8px center !important;
             background-size: 12px !important;
-            padding-right: 24px !important; /* 给箭头留位置 */
+            padding-right: 24px !important;
         }
 
-        /* 5. 专门修复 "Keep" 标题栏的框中框问题 */
-        .input-with-prefix {
-            /* 容器本身要有玻璃质感 */
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            border-radius: 8px !important;
-            padding: 6px 10px !important;
-            display: flex;
-            align-items: center;
-        }
-        /* 里面的输入框要完全透明，去掉边框，不然会有两个框 */
-        .input-with-prefix input {
-            background: transparent !important;
-            border: none !important;
-            padding: 0 0 0 5px !important;
-            margin: 0 !important;
-            box-shadow: none !important;
-            width: 100%; /* 撑满剩余空间 */
-        }
-
-        /* 6. 针对 mini-input (小输入框) 的微调 */
-        .mini-input {
-            text-align: center;
-            padding: 4px !important;
-        }
+        .mini-input { text-align: center; padding: 4px !important; }
     </style>
 </head>
 
@@ -92,14 +96,12 @@
     <div class="liquid-orb orb-2"></div>
 
     <div id="main-div">
-        <!-- 左侧：手机预览 (被克隆的目标) -->
+        <!-- 左侧：手机预览 -->
         <div id="new-Img" class="new-img glass-effect">
             <div class="bgimgwrap" id="bgimgwrap">
                 <img src="" class="innerbgimg" id="bg-img" alt="" />
             </div>
-            <!-- 这里的 gui-img 可能是 canvas 绘图，克隆时需要特殊处理 -->
             <img src="" id="gui-img" alt="" />
-            
             <div class="portrait-wrap" id="portrait-wrap">
                 <img class="portrait" id="portrait" src="" alt="" />
             </div>
@@ -122,14 +124,11 @@
         <div class="set-data">
             <div id="messageBox"></div>
 
-            <!-- 导出控制区 -->
             <div class="glass-card export-panel">
                 <div class="export-grid">
-                    <!-- 这里的 Download1 是外部JS定义的函数，我们会兼容它 -->
                     <button onclick="Download(Download1)" class="btn-primary main-save">
                         <span class="icon"></span> 保存高清图片
                     </button>
-                    <!-- 预览等按钮保留原有逻辑 -->
                     <button onclick="Download(Download2)" class="btn-secondary main-preview">
                         <span class="icon"></span> 预览
                     </button>
@@ -137,10 +136,9 @@
                 </div>
             </div>
 
-            <!-- 主设置面板 -->
             <div class="glass-card control-panel">
                 <ul class="setDataList">
-                    <!-- 用户信息 -->
+                    <!-- 基本信息 -->
                     <div class="input-group">
                         <div class="group-title">基本信息</div>
                         <li>
@@ -159,7 +157,11 @@
                             <label>标题</label>
                             <div class="input-with-prefix">
                                 <span class="prefix">keep • </span>
-                                <input id="inpt_keep_title" onchange="setData()" type="text" placeholder="户外跑步">
+                                <!-- 
+                                    🌟 关键修改：
+                                    oninput="autoWidth(this)" -> 每次打字都会调用下面的JS函数调整宽度
+                                -->
+                                <input id="inpt_keep_title" oninput="autoWidth(this)" onchange="setData()" type="text" placeholder="户外跑步">
                             </div>
                         </li>
                     </div>
@@ -255,12 +257,6 @@
                                     <option value="['images/bg1_empty2.png', 'images/bg1_empty2.png']">默认</option>
                                 </select>
                                 <button onclick="drawMine()" class="btn-small btn-secondary" title="生成随机路径">随机</button>
-                                <select onchange="guijiSelect_onChange()" id="guiji_Select_2" class="guijiSelect" style="display:none;">
-                                    <option value="['images/bg2_empty.png', 'images/bg2_empty.png']">默认</option>
-                                </select>
-                                <select onchange="guijiSelect_onChange()" id="guiji_Select_3" class="guijiSelect" style="display:none;">
-                                    <option value="['images/bg3_empty.png', 'images/bg3_empty.png']">默认</option>
-                                </select>
                             </div>
                         </li>
 
@@ -286,7 +282,6 @@
                         </div>
                     </div>
 
-                    <!-- 输出尺寸 -->
                     <div class="input-group no-border">
                         <li>
                             <label>宽度</label>
@@ -294,7 +289,6 @@
                             <span class="unit">px</span>
                         </li>
                     </div>
-
                 </ul>
 
                 <div class="divider"></div>
@@ -306,7 +300,6 @@
         </div>
     </div>
 
-    <!-- JS 引用 -->
     <script src="js/invoke/html2canvas.min.js" defer></script>
     <script src="js/invoke/amapHelper.js" defer></script>
     <script src="js/indexedDB.js" defer></script>
@@ -316,100 +309,96 @@
     <script src="js/dataURLtoBlob.js" defer></script>
     <script src="js/img_both_inpt_set.js" defer></script>
     <script src="js/draw_personalization.js" defer></script>
-    <!-- 注意：download_img.js 里的函数会被下面的脚本覆盖，这是正常的 -->
     <script src="js/download_img.js" defer></script>
     <script src="js/localTrackGen.js"></script>
     <script src="js/drawMine.js" defer></script>
     <script src="js/onload.js" defer></script>
 
-    <!-- 🌟 终极修复：离屏克隆生成器 -->
+    <!-- 🌟 脚本功能：自动宽度 + 离屏下载 -->
     <script>
-        window.addEventListener('load', function() {
-            console.log("Liquid Fix: Off-screen renderer loaded.");
+        // 1. 输入框自动宽度脚本 (iOS兼容)
+        function autoWidth(elem) {
+            // 创建一个临时 Canvas 用来测量文字在当前字体下的真实宽度
+            let canvas = autoWidth.canvas || (autoWidth.canvas = document.createElement("canvas"));
+            let context = canvas.getContext("2d");
+            let style = window.getComputedStyle(elem);
+            
+            // 复制输入框的字体设置
+            context.font = style.font;
+            
+            // 获取文字宽度，如果为空显示placeholder的宽度
+            let text = elem.value || elem.placeholder || "";
+            let metrics = context.measureText(text);
+            
+            // 设置新宽度 (文字宽度 + 一点点余量防止抖动)
+            let newWidth = Math.ceil(metrics.width) + 10; 
+            elem.style.width = newWidth + "px";
+        }
 
-            // 覆盖原有的 Download 函数
+        // 页面加载完成后，初始化一次宽度
+        window.addEventListener('load', function() {
+            let titleInput = document.getElementById('inpt_keep_title');
+            if(titleInput) autoWidth(titleInput);
+            
+            console.log("Liquid Fix: Auto-width & Off-screen renderer loaded.");
+
+            // 2. 离屏下载逻辑 (你之前的版本)
             window.Download = function(fileNameArg) {
                 const targetNode = document.getElementById('new-Img');
                 if (!targetNode) return;
 
-                // 1. 创建幽灵容器 (Ghost Container)
-                // 这个容器位于屏幕外，用于放置我们的克隆体
                 const ghostWrapper = document.createElement('div');
                 ghostWrapper.style.position = 'fixed';
                 ghostWrapper.style.top = '-9999px';
                 ghostWrapper.style.left = '-9999px';
                 ghostWrapper.style.zIndex = '-1000';
-                // 锁定宽度，防止因容器变化导致内容换行
                 ghostWrapper.style.width = targetNode.offsetWidth + 'px';
                 document.body.appendChild(ghostWrapper);
 
-                // 2. 深度克隆节点
                 const clonedNode = targetNode.cloneNode(true);
-
-                // 3. 关键：手动重绘 Canvas 内容
-                // cloneNode 不会复制 canvas 的绘图状态，必须手动把原图画过去
                 const originalCanvases = targetNode.querySelectorAll('canvas');
                 const clonedCanvases = clonedNode.querySelectorAll('canvas');
                 originalCanvases.forEach((orig, index) => {
                     if (clonedCanvases[index]) {
                         const destCtx = clonedCanvases[index].getContext('2d');
-                        // 确保尺寸一致
                         clonedCanvases[index].width = orig.width;
                         clonedCanvases[index].height = orig.height;
                         destCtx.drawImage(orig, 0, 0);
                     }
                 });
 
-                // 4. 净化克隆体样式
-                // 这里移除所有导致 html2canvas 崩溃的特效
-                clonedNode.style.transform = 'none';       // 移除缩放
-                clonedNode.style.boxShadow = 'none';       // 移除阴影
-                clonedNode.style.margin = '0';             // 移除边距
-                clonedNode.style.transition = 'none';      // 移除动画
-                
-                // 确保背景正确 (防止背景透明变黑)
-                if (getComputedStyle(targetNode).backgroundColor === 'rgba(0, 0, 0, 0)') {
-                   // 如果原背景透明，保持透明或设为白色，视需求而定
-                }
+                clonedNode.style.transform = 'none';
+                clonedNode.style.boxShadow = 'none';
+                clonedNode.style.margin = '0';
+                clonedNode.style.transition = 'none';
 
                 ghostWrapper.appendChild(clonedNode);
 
-                // 5. 确定文件名
                 let fileName = "HEU_Run_" + new Date().toISOString().slice(0,10) + ".png";
-                // 兼容原代码传入的 Download1 函数或字符串
                 if (typeof fileNameArg === 'function') {
                     try { fileName = fileNameArg(); } catch (e) {}
                 } else if (typeof fileNameArg === 'string') {
                     fileName = fileNameArg;
                 }
-                // 确保后缀名
                 if (!fileName.endsWith('.png')) fileName += '.png';
 
-                // 6. 调用 html2canvas
-                // 因为克隆体没有特效，这里渲染会非常快且准确
                 html2canvas(clonedNode, {
-                    scale: 2,          // 2倍高清
-                    useCORS: true,     // 跨域支持
-                    backgroundColor: null, // 保持透明背景
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: null,
                     logging: false
                 }).then(canvas => {
-                    // 7. 触发下载
                     const link = document.createElement('a');
                     link.href = canvas.toDataURL('image/png');
                     link.download = fileName;
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
-                    
-                    // 8. 清理
                     document.body.removeChild(ghostWrapper);
-                    console.log("Download success.");
                 }).catch(err => {
                     console.error("生成失败:", err);
-                    alert("生成失败，请检查网络或图片跨域设置");
-                    if (document.body.contains(ghostWrapper)) {
-                        document.body.removeChild(ghostWrapper);
-                    }
+                    alert("生成失败，请检查网络");
+                    if (document.body.contains(ghostWrapper)) document.body.removeChild(ghostWrapper);
                 });
             };
         });
