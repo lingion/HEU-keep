@@ -253,7 +253,7 @@
     </div>
     </div>
 
-    <!-- JS 引用保持不变 -->
+    <!-- JS 引用 -->
     <script src="js/invoke/html2canvas.min.js" defer></script>
     <script src="js/invoke/amapHelper.js" defer></script>
     <script src="js/indexedDB.js" defer></script>
@@ -267,44 +267,51 @@
     <script src="js/localTrackGen.js"></script>
     <script src="js/drawMine.js" defer></script>
     <script src="js/onload.js" defer></script>
-    <script>
-    // 劫持原有的 Download 函数
-    const originalDownload = window.Download;
-    
-    window.Download = function(type) {
-        const targetNode = document.getElementById('new-Img');
-        
-        // 1. 截图前：临时移除 transform 和复杂的 box-shadow
-        const originalTransform = targetNode.style.transform;
-        const originalBoxShadow = targetNode.style.boxShadow;
-        const originalMargin = targetNode.style.margin;
-        
-        // 强制重置样式以配合 html2canvas
-        targetNode.style.transform = 'none';
-        targetNode.style.boxShadow = 'none'; 
-        targetNode.style.margin = '0';
-        
-        // 2. 调用原有的下载函数
-        // 注意：因为 html2canvas 是异步的，简单的恢复样式可能会太快
-        // 这里我们使用 setTimeout 稍微延迟一下样式恢复，或者直接依赖 html2canvas 的 promise (如果你能改动 download_img.js 最好)
-        
-        // 为了保险起见，我们直接执行下载逻辑，但因为无法侵入原有逻辑的内部回调
-        // 这里只是一个权宜之计：先去样式 -> 执行 -> 延时恢复
-        
-        try {
-            originalDownload(type);
-        } catch (e) {
-            console.error(e);
-            alert("生成图片失败，请检查控制台");
-        }
 
-        // 3. 截图后：恢复样式 (延时 1000ms 确保截图动作已开始)
-        setTimeout(() => {
-            targetNode.style.transform = originalTransform;
-            targetNode.style.boxShadow = originalBoxShadow;
-            targetNode.style.margin = originalMargin;
-        }, 1000);
-    };
-</script>
+    <!-- 🌟 自动修复脚本：截图时移除特效，截图后恢复 -->
+    <script>
+        window.addEventListener('load', function() {
+            // 确保原始函数存在
+            if (typeof window.Download === 'function') {
+                const originalDownload = window.Download;
+
+                // 劫持 Download 函数
+                window.Download = function(arg) {
+                    const targetNode = document.getElementById('new-Img');
+
+                    // 1. 保存当前样式
+                    const originalTransform = targetNode.style.transform;
+                    const originalBoxShadow = targetNode.style.boxShadow;
+                    const originalMargin = targetNode.style.margin;
+
+                    // 2. 强制移除干扰截图的 CSS 属性
+                    // transform: scale() 会导致 html2canvas 坐标计算错误
+                    targetNode.style.transform = 'none';
+                    // 复杂的 box-shadow 会导致渲染极慢
+                    targetNode.style.boxShadow = 'none';
+                    // margin 可能会导致偏移
+                    targetNode.style.margin = '0';
+
+                    // 3. 稍微延迟调用截图，确保浏览器应用了去特效的样式
+                    setTimeout(() => {
+                        try {
+                            originalDownload(arg);
+                        } catch (e) {
+                            console.error("截图过程出错:", e);
+                        } finally {
+                            // 4. 截图指令发出后，延迟恢复样式
+                            // 延迟 500ms 足够让 html2canvas 完成 DOM 克隆
+                            setTimeout(() => {
+                                targetNode.style.transform = originalTransform;
+                                targetNode.style.boxShadow = originalBoxShadow;
+                                targetNode.style.margin = originalMargin;
+                            }, 500);
+                        }
+                    }, 50);
+                };
+                console.log("Safe-Mode Download Activated.");
+            }
+        });
+    </script>
 </body>
 </html>
