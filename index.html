@@ -15,11 +15,111 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-    <title>HEU人最后的倔强 ver.Liquid</title>
+    <title>HEU Keep Generator</title>
     <link rel="icon" href="./favicon.ico">
     <link rel="shortcut icon" href="./favicon.ico">
     <link rel="stylesheet" href="./css/liquid.css">
-    <link rel="preload" href="./DINCond-Bold.otf" as="font" type="font/otf" crossorigin>
+        <link rel="preload" href="./DINCond-Bold.otf" as="font" type="font/otf" crossorigin>
+            <style>
+                /* =========================================
+                   iOS 移动端布局专项修复 (Ver 2.0)
+                   ========================================= */
+
+                /* 1. 样式选择框修复 */
+                .flex-group select {
+                    flex: 0 1 auto !important;
+                    width: fit-content !important;
+                    min-width: 60px;
+                    max-width: 65%; /* 稍微给大一点点 */
+                    padding-right: 25px !important;
+                }
+                
+                .flex-group button {
+                    flex-shrink: 0 !important;
+                    white-space: nowrap;
+                }
+
+                /* 2. 标题输入框修复 */
+                .input-with-prefix {
+                    display: inline-flex !important;
+                    width: auto !important;
+                    flex-wrap: nowrap !important;
+                    /* 移除 max-width 限制，允许它撑开，父级通常会自动处理溢出 */
+                }
+                /* =========================================
+                   3. 时间/日期小输入框专项修复
+                   ========================================= */
+                /* 针对 年/月/日/时/分/温湿度 的微型输入框 */
+                .time-inp, .year-inp, .date-inp, .mini-input, #inpt_temperature, #inpt_humidity {
+                    padding: 0 2px !important;   /* 极小的内边距 */
+                    min-width: 25px !important;  /* 允许缩得非常小 */
+                    text-align: center !important; /* 文字居中 */
+                    width: auto;
+                }
+
+                /* 稍微给年份宽一点点，因为是4位数 */
+                .year-inp {
+                    min-width: 40px !important;
+                }
+                /* =========================================
+                       4. 极致紧凑布局修复 (缩减标签空隙)
+                       ========================================= */
+                    
+                    /* 1. 针对每一行的容器：减小 Flex 间距 */
+                    .setDataList li {
+                        gap: 4px !important;          /* 原本可能是 10px 或 15px，现在改为 4px */
+                        justify-content: flex-start;  /* 强制内容靠左，不分散对齐 */
+                    }
+
+                    /* 2. 针对标签 (Label)：取消固定宽度，改为“文字多宽就多宽” */
+                    .setDataList li label {
+                        min-width: 0 !important;      /* 核心：取消 80px 的强制占位 */
+                        width: auto !important;       /* 核心：宽度由文字内容决定 */
+                        flex: 0 0 auto !important;    /* 禁止被压缩或拉伸 */
+                        margin-right: 2px !important; /* 标签和输入框之间只留 2px 缝隙 */
+                        text-align: right;            /* (可选) 文字靠右对齐 */
+                    }
+
+                    /* 3. 针对带前缀的框 (keep • 户外跑步) */
+                    .input-with-prefix {
+                        gap: 2px !important;          /* 缩减 "keep •" 和输入框之间的距离 */
+                    }
+                    
+                    /* 微调前缀文字的边距 */
+                    .prefix {
+                        margin-right: 0 !important;
+                        padding-right: 2px !important;
+                    }
+                /* =========================================
+                       5. 强制里程与配速输入框文字居中
+                       ========================================= */
+                    
+                    /* 针对 里程(#inpt_miles) 和 配速(#inpt_speeds) 主输入框 */
+                    #inpt_miles,
+                    #inpt_speeds,
+                    #inpt_savePic_width,
+                    .mile2-inp {
+                        text-align: center !important; /* 强制覆盖默认的左对齐 */
+                        padding: 0 5px !important;     /* 稍微修正内边距 */
+                    }
+
+                    /* (可选) 如果下面的随机范围小框也没居中，加上这个 */
+                    .range-input {
+                        text-align: center !important;
+                    }
+
+                .input-with-prefix input {
+                    /* 核心：禁止被 Flex 布局挤压 */
+                    flex-shrink: 0 !important;
+                    flex-grow: 0 !important;
+                    
+                    /* 核心：允许根据 JS 设置的 width 生效 */
+                    width: auto;
+                    
+                    /* 保底宽度，防止还没加载出来时太丑 */
+                    min-width: 80px !important;
+                }
+            </style>
 </head>
 
 <body id="body">
@@ -106,7 +206,7 @@
                     <div class="input-group">
                         <div class="group-title">运动数据</div>
                         <li>
-                            <label>里程 (km)</label>
+                            <label>里程</label>
                             <input id="inpt_miles" onchange="setData()" type="text" class="font-mono" placeholder="0.00">
                         </li>
                         <div class="sub-setting">
@@ -228,7 +328,7 @@
                     <div class="input-group no-border">
                         <li>
                             <label>宽度</label>
-                            <input id="inpt_savePic_width" onchange="setData()" type="text" placeholder="默认" style="min-width:80px;">
+                            <input id="inpt_savePic_width" onchange="setData()" type="text" placeholder="默认" style="min-width:50px;">
                             <span class="unit">px</span>
                         </li>
                     </div>
@@ -259,7 +359,118 @@
     <script src="js/localTrackGen.js"></script>
     <script src="js/drawMine.js" defer></script>
     <script src="js/onload.js" defer></script>
+    <!-- ✅ 性能优化版：iOS 输入框自适应宽度脚本 -->
+        <script>
+            // 1. Canvas 上下文单例 (避免重复创建对象)
+            const measureCtx = (function() {
+                const canvas = document.createElement("canvas");
+                return canvas.getContext("2d");
+            })();
 
+            // 缓存计算出的字体字符串，避免重复读取 DOM (可选优化，视情况而定，这里为了准确性每次读取)
+            function getCanvasFont(elem) {
+                const style = window.getComputedStyle(elem);
+                // 简化获取逻辑
+                return `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+            }
+
+            // 2. 核心宽度计算 (无 DOM 写入，纯计算)
+            function calculateWidth(elem) {
+                measureCtx.font = getCanvasFont(elem);
+                // 优先取 value -> placeholder -> 空串
+                const text = elem.value || elem.placeholder || "";
+                const metrics = measureCtx.measureText(text);
+                
+                // 智能留白逻辑
+                const isMini = elem.classList.contains('time-inp') ||
+                               elem.classList.contains('year-inp') ||
+                               elem.classList.contains('date-inp') ||
+                               elem.classList.contains('mini-input') ||
+                               elem.id === 'inpt_temperature' ||
+                               elem.id === 'inpt_humidity';
+
+                const extraSpace = isMini ? 15 : 35;
+                return Math.ceil(metrics.width) + extraSpace;
+            }
+
+            // 3. 高性能更新队列 (使用 rAF 避免掉帧)
+            let updateQueue = new Set();
+            let isTicking = false;
+
+            function requestUpdate(elem) {
+                updateQueue.add(elem);
+                if (!isTicking) {
+                    requestAnimationFrame(flushQueue);
+                    isTicking = true;
+                }
+            }
+
+            function flushQueue() {
+                updateQueue.forEach(elem => {
+                    const newWidth = calculateWidth(elem);
+                    // 只有宽度真正变化时才写入 DOM
+                    if (elem.style.width !== `${newWidth}px`) {
+                        elem.style.width = `${newWidth}px`;
+                    }
+                });
+                updateQueue.clear();
+                isTicking = false;
+            }
+
+            // 4. 初始化与事件委托 (极大的内存优化)
+            function initAutoWidth() {
+                // 立即计算一次所有框
+                document.querySelectorAll('input[type="text"]').forEach(requestUpdate);
+
+                // 使用事件委托，只在父容器 .set-data 上监听
+                const container = document.querySelector('.set-data');
+                if (!container) return;
+
+                container.addEventListener('input', (e) => {
+                    if (e.target.tagName === 'INPUT' && e.target.type === 'text') {
+                        requestUpdate(e.target);
+                    }
+                });
+                
+                // blur 事件不冒泡，focusout 冒泡
+                container.addEventListener('focusout', (e) => {
+                    if (e.target.tagName === 'INPUT' && e.target.type === 'text') {
+                        requestUpdate(e.target);
+                    }
+                });
+            }
+
+            // 5. API 赋值劫持 (保持不变，但接入 rAF 系统)
+            function fixWeatherApiWidth() {
+                const targetIds = ['inpt_temperature', 'inpt_humidity', 'inpt_keep_title', 'inpt_username', 'inpt_year', 'inpt_month', 'inpt_day', 'inpt_hour', 'inpt_min'];
+                targetIds.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+                        Object.defineProperty(el, 'value', {
+                            get: function() { return descriptor.get.call(this); },
+                            set: function(v) {
+                                descriptor.set.call(this, v);
+                                requestUpdate(this); // 接入高性能更新队列
+                            }
+                        });
+                    }
+                });
+            }
+
+            window.addEventListener('DOMContentLoaded', function() {
+                fixWeatherApiWidth();
+                initAutoWidth();
+
+                // 终极延迟检查
+                document.fonts.ready.then(() => {
+                    setTimeout(() => {
+                        document.querySelectorAll('input[type="text"]').forEach(requestUpdate);
+                        console.log("🚀 High-perf width adjustment ready.");
+                    }, 500);
+                });
+            });
+        </script>
     <!-- 🌟 终极修复：离屏克隆生成器 -->
     <script>
         window.addEventListener('load', function() {
