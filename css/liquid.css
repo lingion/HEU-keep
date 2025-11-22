@@ -315,3 +315,4 @@ input[type="checkbox"]:checked::after { transform: translateX(18px); }
 .time-inp, .year-inp, .date-inp, .mini-input, #inpt_temperature, #inpt_humidity { padding: 0 2px !important; min-width: 25px !important; text-align: center !important; width: auto; }
 .year-inp { min-width: 40px !important; }
 #inpt_miles, #inpt_speeds, #inpt_savePic_width, .mile2-inp, .range-input { text-align: center !important; padding: 0 5px !important; }
+
