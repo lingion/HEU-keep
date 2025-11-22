@@ -21,57 +21,74 @@
     <link rel="stylesheet" href="./css/liquid.css">
     <link rel="preload" href="./DINCond-Bold.otf" as="font" type="font/otf" crossorigin>
 
-    <!-- 🌟 iOS 样式修复补丁 + 玻璃质感增强 -->
+    <!-- 🌟 iOS 深度适配样式 v2 -->
     <style>
-        /* 1. 暴力去除 iOS 默认表单样式 */
-        input, select, textarea, button {
-            -webkit-appearance: none !important; /* 核心代码：去除系统默认外观 */
+        /* 1. 基础重置：只针对文本类输入框，放过 Checkbox */
+        input:not([type="checkbox"]):not([type="file"]), 
+        select, 
+        textarea {
+            -webkit-appearance: none !important;
             appearance: none !important;
             outline: none !important;
-            box-shadow: none !important; /* 去除 iOS 聚焦时的阴影 */
+            color: #fff !important; /* 强制白字 */
+            font-family: inherit;
         }
 
-        /* 2. 强制统一样式 (深色玻璃感) */
-        .setDataList input, 
-        .setDataList select, 
+        /* 2. 通用输入框玻璃质感 (排除标题栏这种特殊结构的) */
+        .setDataList li > input:not([type="checkbox"]),
+        .setDataList li > select,
         .mini-input,
-        .year-inp, .date-inp, .time-inp,
-        #inpt_username, #inpt_keep_title {
-            background-color: rgba(255, 255, 255, 0.08) !important; /* 强制半透明背景 */
-            border: 1px solid rgba(255, 255, 255, 0.15) !important; /* 细微边框 */
-            color: #fff !important; /* 强制文字白色 */
-            border-radius: 12px !important; /* 统一圆角 */
-            backdrop-filter: blur(5px); /* 增加磨砂感 */
-            padding: 8px 12px !important; /* 统一内边距 */
+        .datetime-row input {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 8px !important;
+            padding: 6px 10px !important;
+            box-shadow: none !important;
         }
 
-        /* 3. 修复 Placeholder (提示文字) 颜色 */
-        ::placeholder {
-            color: rgba(255, 255, 255, 0.4) !important;
-        }
-        ::-webkit-input-placeholder {
-            color: rgba(255, 255, 255, 0.4) !important;
-        }
+        /* 3. 修复 Placehoder 颜色 */
+        ::placeholder { color: rgba(255, 255, 255, 0.3) !important; }
+        ::-webkit-input-placeholder { color: rgba(255, 255, 255, 0.3) !important; }
 
-        /* 4. 修复下拉菜单在 iOS 上没有箭头的问题 */
-        select {
-            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") !important;
-            background-repeat: no-repeat !important;
-            background-position: right 10px center !important;
-            background-size: 12px !important;
-            padding-right: 30px !important; /* 给箭头留位置 */
-        }
-
-        /* 5. 按钮样式统一 */
-        button {
-            -webkit-tap-highlight-color: transparent; /* 去除点击高亮色块 */
+        /* 4. 重点修复：Keep 标题栏 (去除框中框) */
+        .input-with-prefix {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.1) !important; /* 背景加在容器上 */
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 8px !important;
+            padding: 6px 12px !important;
+            width: fit-content !important; /* 容器宽度自适应内容 */
+            min-width: 200px; /* 最小宽度 */
+            max-width: 100%;
         }
         
-        /* 6. 修复小屏幕下输入框高度不一致 */
-        .mini-input {
-            height: 36px !important;
-            line-height: normal !important;
-            text-align: center;
+        /* 标题栏里的输入框：透明、无边框、自适应 */
+        .input-with-prefix input {
+            background: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            height: auto !important;
+            min-width: 50px;
+            flex: 1; /* 填满剩余空间 */
+            width: auto; /* 允许 JS 调整宽度 */
+        }
+
+        /* 5. 修复下拉箭头 */
+        select {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 8px center !important;
+            background-size: 12px !important;
+            padding-right: 24px !important;
+        }
+
+        /* 6. 确保 Checkbox (开关) 正常显示绿色 */
+        input[type="checkbox"] {
+            -webkit-appearance: checkbox !important; /* 尝试恢复默认，但在 iOS 上 switch 样式通常需要 appearance: auto */
+            appearance: auto !important; 
+            /* 如果原 CSS 做了自定义 switch，这里不需要额外代码，只要不写 appearance: none 即可 */
         }
     </style>
 </head>
@@ -84,13 +101,12 @@
     <div class="liquid-orb orb-2"></div>
 
     <div id="main-div">
-        <!-- 左侧：手机预览 (被克隆的目标) -->
+        <!-- 左侧：手机预览 -->
         <div id="new-Img" class="new-img glass-effect">
             <div class="bgimgwrap" id="bgimgwrap">
                 <img src="" class="innerbgimg" id="bg-img" alt="" />
             </div>
             <img src="" id="gui-img" alt="" />
-            
             <div class="portrait-wrap" id="portrait-wrap">
                 <img class="portrait" id="portrait" src="" alt="" />
             </div>
@@ -113,7 +129,6 @@
         <div class="set-data">
             <div id="messageBox"></div>
 
-            <!-- 导出控制区 -->
             <div class="glass-card export-panel">
                 <div class="export-grid">
                     <button onclick="Download(Download1)" class="btn-primary main-save">
@@ -126,15 +141,15 @@
                 </div>
             </div>
 
-            <!-- 主设置面板 -->
             <div class="glass-card control-panel">
                 <ul class="setDataList">
-                    <!-- 用户信息 -->
+                    <!-- 基本信息 -->
                     <div class="input-group">
                         <div class="group-title">基本信息</div>
                         <li>
                             <label>用户名</label>
-                            <input id="inpt_username" onchange="setData()" type="text" placeholder="输入昵称">
+                            <!-- 添加 oninput 实现宽度自适应 -->
+                            <input id="inpt_username" oninput="adjustWidth(this)" onchange="setData()" type="text" placeholder="输入昵称">
                         </li>
                         <li>
                             <label>头像</label>
@@ -148,7 +163,8 @@
                             <label>标题</label>
                             <div class="input-with-prefix">
                                 <span class="prefix">keep • </span>
-                                <input id="inpt_keep_title" onchange="setData()" type="text" placeholder="户外跑步">
+                                <!-- 这里是重点：透明背景 + 自动宽度 -->
+                                <input id="inpt_keep_title" oninput="adjustWidth(this)" onchange="setData()" type="text" placeholder="户外跑步">
                             </div>
                         </li>
                     </div>
@@ -255,6 +271,7 @@
 
                         <li class="switch-row">
                             <div class="switch-item">
+                                <!-- 复选框不需要额外的 CSS 就可以在 iOS 上显示为绿色开关，只要不加 appearance:none -->
                                 <input type="checkbox" id="auto_draw_checkbox" onchange="auto_draw_checkbox_onchange()" checked />
                                 <span>自动生成</span>
                             </div>
@@ -275,7 +292,6 @@
                         </div>
                     </div>
 
-                    <!-- 输出尺寸 -->
                     <div class="input-group no-border">
                         <li>
                             <label>宽度</label>
@@ -283,7 +299,6 @@
                             <span class="unit">px</span>
                         </li>
                     </div>
-
                 </ul>
 
                 <div class="divider"></div>
@@ -295,7 +310,6 @@
         </div>
     </div>
 
-    <!-- JS 引用 -->
     <script src="js/invoke/html2canvas.min.js" defer></script>
     <script src="js/invoke/amapHelper.js" defer></script>
     <script src="js/indexedDB.js" defer></script>
@@ -310,11 +324,40 @@
     <script src="js/drawMine.js" defer></script>
     <script src="js/onload.js" defer></script>
 
-    <!-- 🌟 终极修复：离屏克隆生成器 (保持之前的好用功能) -->
+    <!-- 🌟 功能脚本：自动宽度 + 离屏下载 -->
     <script>
+        // 1. 输入框宽度自适应函数
+        function adjustWidth(el) {
+            // 创建一个临时的 span 来测量文字宽度
+            let canvas = adjustWidth.canvas || (adjustWidth.canvas = document.createElement("canvas"));
+            let context = canvas.getContext("2d");
+            let style = window.getComputedStyle(el);
+            context.font = style.font; // 保持字体一致
+            
+            let text = el.value || el.placeholder;
+            let metrics = context.measureText(text);
+            
+            // 设置宽度 (文字宽度 + 少量 padding)
+            // 设置最小宽度防止太窄
+            let newWidth = Math.max(50, metrics.width + 20); 
+            
+            // 对于 Keep 标题栏，我们需要更灵活一点
+            if(el.id === 'inpt_keep_title') {
+                 // 这里的逻辑是：如果文字很少，就用最小宽度；如果文字很多，撑开
+                 el.style.width = newWidth + 'px';
+            }
+        }
+
+        // 初始化时也调用一次
+        window.addEventListener('load', function() {
+            adjustWidth(document.getElementById('inpt_username'));
+            adjustWidth(document.getElementById('inpt_keep_title'));
+        });
+
+
+        // 2. 离屏下载逻辑 (保持不变)
         window.addEventListener('load', function() {
             console.log("Liquid Fix: Off-screen renderer loaded.");
-
             window.Download = function(fileNameArg) {
                 const targetNode = document.getElementById('new-Img');
                 if (!targetNode) return;
@@ -328,7 +371,6 @@
                 document.body.appendChild(ghostWrapper);
 
                 const clonedNode = targetNode.cloneNode(true);
-
                 const originalCanvases = targetNode.querySelectorAll('canvas');
                 const clonedCanvases = clonedNode.querySelectorAll('canvas');
                 originalCanvases.forEach((orig, index) => {
@@ -344,9 +386,6 @@
                 clonedNode.style.boxShadow = 'none';
                 clonedNode.style.margin = '0';
                 clonedNode.style.transition = 'none';
-                
-                if (getComputedStyle(targetNode).backgroundColor === 'rgba(0, 0, 0, 0)') {
-                }
 
                 ghostWrapper.appendChild(clonedNode);
 
@@ -370,15 +409,11 @@
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
-                    
                     document.body.removeChild(ghostWrapper);
-                    console.log("Download success.");
                 }).catch(err => {
                     console.error("生成失败:", err);
-                    alert("生成失败，请检查网络或图片跨域设置");
-                    if (document.body.contains(ghostWrapper)) {
-                        document.body.removeChild(ghostWrapper);
-                    }
+                    alert("生成失败");
+                    if (document.body.contains(ghostWrapper)) document.body.removeChild(ghostWrapper);
                 });
             };
         });
