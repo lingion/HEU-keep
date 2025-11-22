@@ -15,7 +15,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-    <title>HEU Keep Generator</title>
+    <title>HEU人最后的倔强 ver.Liquid</title>
     <link rel="icon" href="./favicon.ico">
     <link rel="shortcut icon" href="./favicon.ico">
     <link rel="stylesheet" href="./css/liquid.css">
@@ -123,11 +123,16 @@
 </head>
 
 <body id="body">
-
-    <!-- 动态背景层 -->
-    <div class="liquid-bg-gradient"></div>
-    <div class="liquid-orb orb-1"></div>
-    <div class="liquid-orb orb-2"></div>
+    <!-- 在 body 标签开头 -->
+    <!-- 背景容器 -->
+    <div class="ambient-background">
+        <!-- 这一层负责放图片 -->
+        <div class="bg-image"></div>
+        <!-- 这一层负责噪点质感 -->
+        <div class="noise-overlay"></div>
+    </div>
+    </div>
+  
 
     <div id="main-div">
         <!-- 左侧：手机预览 (被克隆的目标) -->
