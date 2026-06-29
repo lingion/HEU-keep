@@ -1,4 +1,13 @@
-# HEU-keep
+<p align="center">
+  <a href="https://github.com/lingion/HEU-keep/stargazers"><img src="https://img.shields.io/github/stars/lingion/HEU-keep?style=for-the-badge&logo=github&color=FFD700" alt="Stars"></a>
+  <a href="https://github.com/lingion/HEU-keep/network/members"><img src="https://img.shields.io/github/forks/lingion/HEU-keep?style=for-the-badge&logo=github&color=8B5CF6" alt="Forks"></a>
+  <a href="https://github.com/lingion/HEU-keep/issues"><img src="https://img.shields.io/github/issues/lingion/HEU-keep?style=for-the-badge&logo=github&color=EF4444" alt="Issues"></a>
+  <a href="https://github.com/lingion/HEU-keep/blob/main/LICENSE"><img src="https://img.shields.io/github/license/lingion/HEU-keep?style=for-the-badge&logo=github&color=10B981" alt="License"></a>
+  <br>
+  <a href="https://github.com/lingion/HEU-keep/commits/main"><img src="https://img.shields.io/github/last-commit/lingion/HEU-keep?style=flat-square" alt="Last commit"></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.x-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python"></a>
+  <a href="https://flask.palletsprojects.com/"><img src="https://img.shields.io/badge/Flask-2.x-000000?style=flat-square&logo=flask" alt="Flask"></a>
+</p>
 
 HEU-keep is a **Keep-style workout card generator** adapted for Harbin Engineering University (HEU).
 
