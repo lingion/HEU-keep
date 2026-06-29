@@ -61,3 +61,5 @@ All meaningful project evolution should ultimately land in this repository. Coll
 - `RESUME_BULLETS.md` — resume-ready project descriptions
 - `TEAM_SPLIT.md` — role split
 - `MAIN_REPOSITORY_SCOPE.md` — main repository rule
+- **[Online Operation Guide](https://blog.qdp.qzz.io/docs/heu-keep/overview)** — step-by-step user manual with workflow, track generation, export, and troubleshooting
+- **[Technical Write-up](https://blog.qdp.qzz.io/heu-keep-workout-card-generator)** — elliptical track decomposition, random walk drift, color gradient state machine, off-screen export pipeline
