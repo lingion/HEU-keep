@@ -14,7 +14,7 @@ HEU-keep is a **Keep-style workout card generator** adapted for Harbin Engineeri
 > **Primary repository:** `lingion/HEU-keep`  
 > This is the only mainline source of truth for the project.
 
-## 🚀 Try Demo (P1)
+## Try Demo (P1)
 
 - **Cloudflare Pages (latest deployment):**  
   https://master.heu-keep-demo.pages.dev
@@ -24,7 +24,7 @@ HEU-keep is a **Keep-style workout card generator** adapted for Harbin Engineeri
   - `/index.html` (classic)
   - `/liquid.html` (liquid)
 
-## 🖼️ Screenshots (P0)
+## Screenshots (P0)
 
 ### Light Mode
 ![HEU-keep Classic Preview](https://raw.githubusercontent.com/lingion/HEU-keep/master/docs/screenshots/preview-light-mode.jpg)
@@ -32,7 +32,7 @@ HEU-keep is a **Keep-style workout card generator** adapted for Harbin Engineeri
 ### Dark Mode
 ![HEU-keep Liquid Preview](https://raw.githubusercontent.com/lingion/HEU-keep/master/docs/screenshots/preview-dark-mode.jpg)
 
-## ✨ Highlights
+## Highlights
 
 - High-fidelity Keep-style running summary UI
 - HEU map adaptation and scene customization
